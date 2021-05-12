@@ -13,6 +13,11 @@ public class TestShipLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKey(KeyCode.W)) { transform.position += new Vector3(0, .05f, 0); }
+        if (Input.GetKey(KeyCode.A)) { transform.position += new Vector3(-.05f, 0, 0); }
+        if (Input.GetKey(KeyCode.S)) { transform.position += new Vector3(0, -.05f, 0); }
+        if (Input.GetKey(KeyCode.D)) { transform.position += new Vector3(.05f, 0, 0); }
+        if (Input.GetKey(KeyCode.Q)) { transform.Rotate(new Vector3(0, 0, 1f)); }
+        if (Input.GetKey(KeyCode.E)) { transform.Rotate(new Vector3(0, 0, -1f)); }
     }
 }

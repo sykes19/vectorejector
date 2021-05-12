@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c2f00140184d9945a71c883f40b1e95, type: 3}
-  m_Name: Arrowhead
-  m_EditorClassIdentifier: Assembly-CSharp::VectorArtScriptableObject
+  m_Name: Square
+  m_EditorClassIdentifier: 
   points:
-  - Angle: 0
+  - Angle: 45
     Magnitude: 1
   - Angle: 135
     Magnitude: 1
-  - Angle: 180
-    Magnitude: 0.4
   - Angle: 225
+    Magnitude: 1
+  - Angle: 315
     Magnitude: 1
   loop: 1
