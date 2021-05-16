@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class AsteroidLogic : MonoBehaviour
 {
+    public DirectorSpawnLogic dirLogic;
     Rigidbody2D rb;
     Renderer rend;
-    Vector2 direction;
+    public Vector2 direction;
     HealthLogic myHealth;
     public float speed;
     public float angle;
     public float deathRadius;
     public float deathStrength;
-    public int budgetCost;
+    public int budgetValue;
     public int healthMax;
     private bool seen;
 
@@ -22,31 +23,49 @@ public class AsteroidLogic : MonoBehaviour
 
     void Awake()
     {
+        // This value is relevant in FixedUpdate
+        if (budgetValue == 0)
+            budgetValue = 20;
+
         seen = false;
         rb = GetComponent<Rigidbody2D>();
         rend = GetComponent<Renderer>();
-        // No collisions for now. Mommy is mad.
+
+        // Collisions are just a trigger for the moment
         GetComponent<Collider2D>().isTrigger = true;
 
         myHealth = GetComponent<HealthLogic>();
         myHealth.health = healthMax;
 
-        // Set a bunch of initial values. These can be overridden during the Start and OnAwake phases.
-        // Eventually, direction won't be true random, but dependant on the perspective type we're in.
-        // Speed will also be factored in dynamically, but for now, randomized for testing.
-
-        angle = Random.Range(0,359);                        // Random direction
-        speed = speed * Random.Range(0.5f,2.5f);            // Random speed
-        float dirx = Mathf.Sin(angle * Mathf.Deg2Rad) * speed;
-        float diry = Mathf.Cos(angle * Mathf.Deg2Rad) * speed;
-        direction = new Vector2(dirx, diry);
-
-        rb.velocity = direction;                            
+        // Set initial values in case nothing else gives me any orders.
+        // Instantiation will override these, if values are given.
+        //angle = Random.Range(0,359);                        // Random direction
+        speed *= Random.Range(0.5f,2.5f);                   // Random speed
         rb.angularVelocity = Random.Range(-50,50);          // Random spin
+
+    }
+
+    private void Start()
+    {
+        StartMovement();
+    }
+
+    // Method to reset movement if needed
+    private void StartMovement()
+    {
+        //float dirx = Mathf.Sin(angle * Mathf.Deg2Rad) * speed;
+        //float diry = Mathf.Cos(angle * Mathf.Deg2Rad) * speed;
+        //direction = new Vector2(dirx, diry);
+        rb.velocity = direction.normalized * speed;
+        print(angle);
     }
 
     void FixedUpdate()
     {
+        // If you aren't moving where you should be, apply new velocity values
+        //if (angle != Vector2.Angle(rb.velocity, direction))
+        //    StartMovement();
+
         // If I've been seen before, destroy self off screen
         if (rend.isVisible == false && seen == true)
             myHealth.myCondition = HealthLogic.Condition.dying;
@@ -72,6 +91,12 @@ public class AsteroidLogic : MonoBehaviour
     {
         myHealth.myCondition = HealthLogic.Condition.dead;
         Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        // On death, subtract my budget value from on-screen budget
+        dirLogic.budget -= budgetValue;
     }
 
     private void Explode()
