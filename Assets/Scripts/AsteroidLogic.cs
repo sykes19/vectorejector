@@ -4,42 +4,47 @@ using UnityEngine;
 
 public class AsteroidLogic : MonoBehaviour
 {
+    #region INIT
+    // Component references
     public DirectorSpawnLogic dirLogic;
     Rigidbody2D rb;
     Renderer rend;
+    // Core values
     public Vector2 direction;
     HealthLogic myHealth;
-    public float speed;
-    public float angle;
-    public float deathRadius;
-    public float deathStrength;
     public int budgetValue;
     public int healthMax;
+    // Movement related
+    public float speed;
+    public float angle;
     private bool seen;
+    private Vector2 directionOld;
+    // Explosion code, currently disabled
+    public float deathRadius;
+    public float deathStrength;
 
-    // Bounce code or something
-    //static Vector2 MirrorX = new Vector2(-1f, 1f);
-    //static Vector2 MirrorY = new Vector2(1f, -1f);
+    #endregion
 
     void Awake()
     {
-        // This value is relevant in FixedUpdate
+        // Sanity check to prevent infinite loops
         if (budgetValue == 0)
             budgetValue = 20;
 
+        // I spawn out of view, remember this
         seen = false;
+
         rb = GetComponent<Rigidbody2D>();
         rend = GetComponent<Renderer>();
 
-        // Collisions are just a trigger for the moment
+        // No physics for now. Just triggers.
         GetComponent<Collider2D>().isTrigger = true;
 
+        // Attach to health script, and tell it how beeg boi I am
         myHealth = GetComponent<HealthLogic>();
         myHealth.health = healthMax;
 
         // Set initial values in case nothing else gives me any orders.
-        // Instantiation will override these, if values are given.
-        //angle = Random.Range(0,359);                        // Random direction
         speed *= Random.Range(0.5f,2.5f);                   // Random speed
         rb.angularVelocity = Random.Range(-50,50);          // Random spin
 
@@ -47,24 +52,27 @@ public class AsteroidLogic : MonoBehaviour
 
     private void Start()
     {
-        StartMovement();
+        UpdateMovement();
     }
 
     // Method to reset movement if needed
-    private void StartMovement()
+    private void UpdateMovement()
     {
+        // This code was for polar -> cartesian conversion, but I removed the polar parts
+        // For now...
         //float dirx = Mathf.Sin(angle * Mathf.Deg2Rad) * speed;
         //float diry = Mathf.Cos(angle * Mathf.Deg2Rad) * speed;
         //direction = new Vector2(dirx, diry);
+
         rb.velocity = direction.normalized * speed;
-        print(angle);
+        directionOld = direction;
     }
 
     void FixedUpdate()
     {
-        // If you aren't moving where you should be, apply new velocity values
-        //if (angle != Vector2.Angle(rb.velocity, direction))
-        //    StartMovement();
+        // Check if outside sources tell me to move elsewhere
+        if (directionOld != direction)
+            UpdateMovement();
 
         // If I've been seen before, destroy self off screen
         if (rend.isVisible == false && seen == true)
@@ -76,8 +84,6 @@ public class AsteroidLogic : MonoBehaviour
         // Check if it's time to die
         if (myHealth.myCondition == HealthLogic.Condition.dying)
         {
-            //Explode();
-            // I don't want to explode anymore. Saving the code for later.
             DeathRoll();
         }
     }

@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class DirectorSpawnLogic : MonoBehaviour
 {
+    // Prefab references
     public GameObject asteroidObj;
+    // Spawning related
     private Vector3 mouseLocation;
     private Vector3 mousePosition;
     private Vector2 fieldSize;
-
     private Vector3 spawnH;
     private Vector3 spawnV;
-
-
+    // Currency related
     public int budget;
     private float spawnInterval = 1;
     private float timer = 0;
@@ -41,16 +41,16 @@ public class DirectorSpawnLogic : MonoBehaviour
             spawnV = new Vector3(Random.Range(fieldSize.x, -fieldSize.x), fieldSize.y / 0.95f, 0);
             Vector3[] spawnLocs = { spawnH, spawnV, -spawnH, -spawnV };
 
-            // Spawn asteroid in random spawn position
+            // Spawn asteroid in random spawn position, and pass my ID
             GameObject ast = Instantiate(asteroidObj, spawnLocs[Random.Range(0,spawnLocs.Length)], Quaternion.identity);
-            // Give the asteroid my ID
             AsteroidLogic astLogic = ast.GetComponent<AsteroidLogic>();
             astLogic.dirLogic = this;
 
             // Find random point in a circle in the center of screen
+            int circleSize = 10;
             Vector3 centerScreen = 
                 new Vector2(this.transform.position.x, this.transform.position.y) +
-                (Random.insideUnitCircle * 10);
+                (Random.insideUnitCircle * circleSize);
             // Set asteroid direction toward chosen point in space
             Vector2 targetDir = centerScreen - ast.transform.position;
             astLogic.direction = targetDir;
@@ -72,7 +72,7 @@ public class DirectorSpawnLogic : MonoBehaviour
         {
             // Spend 40 budget coins (budgies) on asteroids on a set interval.
             SpawnAsteroid(40);
-            timer = 0;
+            timer -= spawnInterval;
         }
         timer += Time.deltaTime;
 
