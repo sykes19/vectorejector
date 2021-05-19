@@ -12,13 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c2f00140184d9945a71c883f40b1e95, type: 3}
   m_Name: Arrowhead
   m_EditorClassIdentifier: Assembly-CSharp::VectorArtScriptableObject
+  type: 0
   points:
-  - Angle: 0
-    Magnitude: 1
-  - Angle: 135
-    Magnitude: 1
-  - Angle: 180
-    Magnitude: 0.4
-  - Angle: 225
-    Magnitude: 1
+  - {x: 0, y: 1}
+  - {x: 135, y: 1}
+  - {x: 180, y: 0.4}
+  - {x: 225, y: 1}
   loop: 1

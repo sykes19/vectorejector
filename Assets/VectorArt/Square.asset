@@ -12,13 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c2f00140184d9945a71c883f40b1e95, type: 3}
   m_Name: Square
   m_EditorClassIdentifier: 
+  type: 1
   points:
-  - Angle: 45
-    Magnitude: 1
-  - Angle: 135
-    Magnitude: 1
-  - Angle: 225
-    Magnitude: 1
-  - Angle: 315
-    Magnitude: 1
+  - {x: 1, y: 1}
+  - {x: 1, y: -1}
+  - {x: -1, y: -1}
+  - {x: -1, y: 1}
   loop: 1
