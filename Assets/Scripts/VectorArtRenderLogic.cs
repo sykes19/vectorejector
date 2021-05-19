@@ -4,74 +4,77 @@ using UnityEngine;
 
 public class VectorArtRenderLogic : MonoBehaviour
 {
-    public VectorArtShape Shape;
-    public float MagnitudeOffset = 0; // Higher values push art further away from origin
-    public float AngleScale = 1; // Decrease to compensate possible warping caused by MagnitudeOffset
-    public float MagnitudeScale = 1; // Higher values increase size of art
+    public VectorArtShape shape;
+    public float magnitudeOffset = 0; // Higher values push art further away from origin
+    public float angleScale = 1; // Decrease to compensate possible warping caused by MagnitudeOffset
+    public float magnitudeScale = 1; // Higher values increase size of art
 
-    LineRenderer Renderer;
-    List<Vector3> OriginPoints = new List<Vector3>();
-    Quaternion LastRotation;
-    float LastMagnitudeOffset;
-    float LastAngleScale;
-    float LastMagnitudeScale;
+    LineRenderer lineRenderer;
+    List<Vector2> polarPoints;
+    List<Vector3> originPoints = new List<Vector3>();
+    Quaternion lastRotation;
+    float lastMagnitudeOffset;
+    float lastAngleScale;
+    float lastMagnitudeScale;
 
     // Start is called before the first frame update
     void Start()
     {
-        Renderer = gameObject.GetComponent<LineRenderer>();
-        Renderer.loop = Shape.loop;
+        lineRenderer = gameObject.GetComponent<LineRenderer>();
+        lineRenderer.loop = shape.loop;
+        polarPoints = shape.toPolar();
         Recalc();
     }
 
     // Update is called once per frame
     void Update()
     {
-        List<Vector3> Points;
+        List<Vector3> points;
 
         // If the only change since last frame is translation, we can simplify calculations slighly
-        if ((transform.rotation == LastRotation)
-         && (MagnitudeOffset == LastMagnitudeOffset)
-         && (AngleScale == LastAngleScale)
-         && (MagnitudeScale == LastMagnitudeScale))
+        if ((transform.rotation == lastRotation)
+         && (magnitudeOffset == lastMagnitudeOffset)
+         && (angleScale == lastAngleScale)
+         && (magnitudeScale == lastMagnitudeScale))
         {
-            Points = new List<Vector3>();
-            foreach (Vector3 Point in OriginPoints)
+            points = new List<Vector3>();
+            foreach (Vector3 Point in originPoints)
             {
-                Points.Add(Point + transform.position);
+                points.Add(Point + transform.position);
             }
         }
         else
         {
-            Points = Recalc();
+            points = Recalc();
         }
-        Renderer.positionCount = Points.Count;
-        Renderer.SetPositions(Points.ToArray());
+        lineRenderer.positionCount = points.Count;
+        lineRenderer.SetPositions(points.ToArray());
     }
 
+    // Recalculates rotation
     List<Vector3> Recalc()
     {
-        LastRotation = transform.rotation;
-        LastMagnitudeOffset = MagnitudeOffset;
-        LastAngleScale = AngleScale;
-        LastMagnitudeScale = MagnitudeScale;
+        lastRotation = transform.rotation;
+        lastMagnitudeOffset = magnitudeOffset;
+        lastAngleScale = angleScale;
+        lastMagnitudeScale = magnitudeScale;
 
-        List<Vector3> Points = new List<Vector3>();
-        OriginPoints.Clear();
+        List<Vector3> points = new List<Vector3>();
+        originPoints.Clear();
 
         //Rotate the art based on the current Z Euler angle, negated because + is CCW
-        float AngleOffset = -transform.eulerAngles.z; 
+        float angleOffset = -transform.eulerAngles.z; 
 
-        foreach (PolarVector Polar in Shape.points)
+        foreach (Vector2 polar in polarPoints)
         {
-            float A = (Polar.Angle * AngleScale + AngleOffset) * Mathf.Deg2Rad;
-            float M = Polar.Magnitude * MagnitudeScale + MagnitudeOffset;
-            Vector3 OriginPoint = new Vector3(Mathf.Sin(A) * M, Mathf.Cos(A) * M, 0);
-            OriginPoints.Add(OriginPoint);
-            Points.Add(OriginPoint + transform.position);
+            float A = (polar.x * angleScale + angleOffset) * Mathf.Deg2Rad;
+            float M = polar.y * magnitudeScale + magnitudeOffset;
+            Vector3 originPoint = new Vector3(Mathf.Sin(A) * M, Mathf.Cos(A) * M, 0);
+            originPoints.Add(originPoint);
+            points.Add(originPoint + transform.position);
         }
 
-        return Points;
+        return points;
     }
 }
 

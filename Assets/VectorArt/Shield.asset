@@ -12,25 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c2f00140184d9945a71c883f40b1e95, type: 3}
   m_Name: Shield
   m_EditorClassIdentifier: 
+  type: 0
   points:
-  - Angle: -40
-    Magnitude: 1
-  - Angle: -20
-    Magnitude: 1
-  - Angle: 0
-    Magnitude: 1
-  - Angle: 20
-    Magnitude: 1
-  - Angle: 40
-    Magnitude: 1
-  - Angle: 40
-    Magnitude: 0.8
-  - Angle: 20
-    Magnitude: 0.8
-  - Angle: 0
-    Magnitude: 0.8
-  - Angle: -20
-    Magnitude: 0.8
-  - Angle: -40
-    Magnitude: 0.8
+  - {x: -40, y: 1}
+  - {x: -20, y: 1}
+  - {x: 0, y: 1}
+  - {x: 20, y: 1}
+  - {x: 40, y: 1}
+  - {x: 40, y: 0.8}
+  - {x: 20, y: 0.8}
+  - {x: 0, y: 0.8}
+  - {x: -20, y: 0.8}
+  - {x: -40, y: 0.8}
   loop: 1
