@@ -6,6 +6,7 @@ public class DirectorSpawnLogic : MonoBehaviour
 {
     // Prefab references
     public GameObject asteroidObj;
+    public DirectorLogic dirLogic;
     // Spawning related
     private Vector3 mouseLocation;
     private Vector3 mousePosition;
@@ -13,7 +14,6 @@ public class DirectorSpawnLogic : MonoBehaviour
     private Vector3 spawnH;
     private Vector3 spawnV;
     // Currency related
-    public int budget;
     private float spawnInterval = 1;
     private float timer = 0;
 
@@ -21,7 +21,8 @@ public class DirectorSpawnLogic : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        budget = 0;
+        dirLogic = GetComponent<DirectorLogic>();
+
         // Detect screen size and bind them to valuble coordinates
         float screenAspect = (float)Screen.width / (float)Screen.height;
         fieldSize.y = Camera.main.orthographicSize;
@@ -44,7 +45,7 @@ public class DirectorSpawnLogic : MonoBehaviour
             // Spawn asteroid in random spawn position, and pass my ID
             GameObject ast = Instantiate(asteroidObj, spawnLocs[Random.Range(0,spawnLocs.Length)], Quaternion.identity);
             AsteroidLogic astLogic = ast.GetComponent<AsteroidLogic>();
-            astLogic.dirLogic = this;
+            astLogic.dirLogic = dirLogic;
 
             // Find random point in a circle in the center of screen
             int circleSize = 10;

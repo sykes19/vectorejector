@@ -6,7 +6,7 @@ public class AsteroidLogic : MonoBehaviour
 {
     #region INIT
     // Component references
-    public DirectorSpawnLogic dirLogic;
+    public DirectorLogic dirLogic;
     Rigidbody2D rb;
     Renderer rend;
     // Core values
@@ -102,7 +102,10 @@ public class AsteroidLogic : MonoBehaviour
     private void OnDestroy()
     {
         // On death, subtract my budget value from on-screen budget
-        dirLogic.budget -= budgetValue;
+        
+        // THIS CANNOT STAY, IT MUST BE FIXED. FINISH DirectorLogic PLEASE
+
+        //dirLogic.budget -= budgetValue;
     }
 
     private void Explode()
