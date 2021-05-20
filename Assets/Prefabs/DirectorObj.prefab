@@ -44,3 +44,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   asteroidObj: {fileID: 5889006523965574343, guid: 1ced53be34c36d3438ae44a6c8a52c2f, type: 3}
+  playerObj: {fileID: 6344401201593979898, guid: a6466910b5bd538488550351d75d01d2, type: 3}
+  dirLogic: {fileID: 0}

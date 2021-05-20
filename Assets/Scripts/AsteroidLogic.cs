@@ -12,7 +12,7 @@ public class AsteroidLogic : MonoBehaviour
     // Core values
     public Vector2 direction;
     HealthLogic myHealth;
-    public int budgetValue;
+    public int budgetCost;
     public int healthMax;
     // Movement related
     public float speed;
@@ -28,8 +28,8 @@ public class AsteroidLogic : MonoBehaviour
     void Awake()
     {
         // Sanity check to prevent infinite loops
-        if (budgetValue == 0)
-            budgetValue = 20;
+        if (budgetCost == 0)
+            budgetCost = 20;
 
         // I spawn out of view, remember this
         seen = false;

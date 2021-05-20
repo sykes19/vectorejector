@@ -6,6 +6,7 @@ public class DirectorSpawnLogic : MonoBehaviour
 {
     // Prefab references
     public GameObject asteroidObj;
+    public GameObject playerObj;
     public DirectorLogic dirLogic;
     // Spawning related
     private Vector3 mouseLocation;
@@ -28,6 +29,13 @@ public class DirectorSpawnLogic : MonoBehaviour
         fieldSize.y = Camera.main.orthographicSize;
         fieldSize.x = fieldSize.y * screenAspect;
 
+        SpawnPlayer();
+
+    }
+
+    void SpawnPlayer()
+    {
+        Instantiate(playerObj, new Vector2(0,0), Quaternion.identity);
     }
 
     // This method spawns asteroids until the budget you give it runs empty
@@ -62,7 +70,7 @@ public class DirectorSpawnLogic : MonoBehaviour
 
             // Subtract that asteroid's value from the for loop condition
             // Some asteroids might have unique values; this is future proofing
-            i -= astLogic.budgetValue;
+            i -= astLogic.budgetCost;
         }
 
     }
