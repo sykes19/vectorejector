@@ -13,17 +13,39 @@ public class VectorArtShape : ScriptableObject
     public VectorArtType type; // Polar or Cartesian
     public Vector2[] points; // If polar, x is Angle and y is Magnitude
     public bool loop; // Last point connects back to the first point
-    public List<Vector2> toPolar() //Returns a list of the points in polar coodinates
+
+    // The list of points is always a Vector2 array, even if the points are polar. Use the following methods to fetch the points properly.
+    public List<VectorP> getPolar() //Returns a list of the points in polar coodinates, regardless of what type it's stored as
     {
-        if (type == VectorArtType.polar) { return new List<Vector2>(points); }
-        List<Vector2> polars = new List<Vector2>();
-        Vector2 up = new Vector2(0, 1);
+        List<VectorP> polarPoints = new List<VectorP>();
+        if (type == VectorArtType.polar)
+        {
+            foreach (Vector2 point in points)
+            {
+                polarPoints.Add(new VectorP(point.x, point.y));
+            }
+        }
+        else
+        {
+            foreach (Vector2 point in points)
+            {
+                polarPoints.Add(point.ToVectorP());
+            }
+        }
+        return polarPoints;
+    }
+
+    public List<Vector2> getCartesian() //Returns a list of the points in cartesian coodinates, regardless of what type it's stored as
+    {
+        if (type == VectorArtType.cartesian)
+        {
+            return new List<Vector2>(points); // Just convert the array to a list
+        }
+        List<Vector2> cartesianPoints = new List<Vector2>();
         foreach (Vector2 point in points)
         {
-            float A = Vector2.SignedAngle(up, point);
-            float M = point.magnitude;
-            polars.Add(new Vector2(A, M));
+            cartesianPoints.Add(new VectorP(point.x, point.y).ToVector2());
         }
-        return polars;
+        return cartesianPoints;
     }
 }

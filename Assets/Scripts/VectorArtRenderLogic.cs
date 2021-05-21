@@ -6,12 +6,12 @@ public class VectorArtRenderLogic : MonoBehaviour
 {
     public VectorArtShape shape;
     public float magnitudeOffset = 0; // Higher values push art further away from origin
-    public float angleScale = 1; // Decrease to compensate possible warping caused by MagnitudeOffset
-    public float magnitudeScale = 1; // Higher values increase size of art
+    public float angleScale = 1; // Set to -1 to mirror the art. Otherwise, decrease to compensate possible warping caused by MagnitudeOffset
+    public float magnitudeScale = 1; // Higher values increase size of art (without making the lines thicker)
 
     LineRenderer lineRenderer;
-    List<Vector2> polarPoints;
-    List<Vector3> originPoints = new List<Vector3>();
+    List<VectorP> polarPoints; // persistent list of the art in polar coords
+    List<Vector3> originPoints = new List<Vector3>(); // does not include current translation, and persistes between updates
     Quaternion lastRotation;
     float lastMagnitudeOffset;
     float lastAngleScale;
@@ -22,14 +22,14 @@ public class VectorArtRenderLogic : MonoBehaviour
     {
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         lineRenderer.loop = shape.loop;
-        polarPoints = shape.toPolar();
+        polarPoints = shape.getPolar();
         Recalc();
     }
 
     // Update is called once per frame
     void Update()
     {
-        List<Vector3> points;
+        List<Vector3> renderPoints;
 
         // If the only change since last frame is translation, we can simplify calculations slighly
         if ((transform.rotation == lastRotation)
@@ -37,21 +37,21 @@ public class VectorArtRenderLogic : MonoBehaviour
          && (angleScale == lastAngleScale)
          && (magnitudeScale == lastMagnitudeScale))
         {
-            points = new List<Vector3>();
+            renderPoints = new List<Vector3>();
             foreach (Vector3 Point in originPoints)
             {
-                points.Add(Point + transform.position);
+                renderPoints.Add(Point + transform.position);
             }
         }
         else
         {
-            points = Recalc();
+            renderPoints = Recalc();
         }
-        lineRenderer.positionCount = points.Count;
-        lineRenderer.SetPositions(points.ToArray());
+        lineRenderer.positionCount = renderPoints.Count;
+        lineRenderer.SetPositions(renderPoints.ToArray());
     }
 
-    // Recalculates rotation
+    // Recalculates rotation and scaling
     List<Vector3> Recalc()
     {
         lastRotation = transform.rotation;
@@ -59,22 +59,23 @@ public class VectorArtRenderLogic : MonoBehaviour
         lastAngleScale = angleScale;
         lastMagnitudeScale = magnitudeScale;
 
-        List<Vector3> points = new List<Vector3>();
+        // newPoints includes current translation. It gets returned to become renderPoints.
+        List<Vector3> newPoints = new List<Vector3>();
+
+        // originPoints does not include current translation, and persistes between updates
         originPoints.Clear();
 
         //Rotate the art based on the current Z Euler angle, negated because + is CCW
         float angleOffset = -transform.eulerAngles.z; 
 
-        foreach (Vector2 polar in polarPoints)
+        foreach (VectorP polar in polarPoints)
         {
-            float A = (polar.x * angleScale + angleOffset) * Mathf.Deg2Rad;
-            float M = polar.y * magnitudeScale + magnitudeOffset;
-            Vector3 originPoint = new Vector3(Mathf.Sin(A) * M, Mathf.Cos(A) * M, 0);
+            Vector3 originPoint = new VectorP((polar.angle * angleScale) + angleOffset, (polar.magnitude * magnitudeScale) + magnitudeOffset).ToVector3();
             originPoints.Add(originPoint);
-            points.Add(originPoint + transform.position);
+            newPoints.Add(originPoint + transform.position);
         }
 
-        return points;
+        return newPoints;
     }
 }
 
