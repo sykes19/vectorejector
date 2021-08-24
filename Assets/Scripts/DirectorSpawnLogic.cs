@@ -49,6 +49,7 @@ public class DirectorSpawnLogic : MonoBehaviour
             spawnH = new Vector3(fieldSize.x / 0.95f, Random.Range(fieldSize.y, -fieldSize.y), 0);
             spawnV = new Vector3(Random.Range(fieldSize.x, -fieldSize.x), fieldSize.y / 0.95f, 0);
             Vector3[] spawnLocs = { spawnH, spawnV, -spawnH, -spawnV };
+            // // // TODO: I CAN DO ALL OF THIS ONLY ONCE, NOT EVERY TIME
 
             // Spawn asteroid in random spawn position, and pass my ID
             GameObject ast = Instantiate(asteroidObj, spawnLocs[Random.Range(0,spawnLocs.Length)], Quaternion.identity);

@@ -40,6 +40,7 @@ public class HealthLogic : MonoBehaviour
         {
             health -= dBuffer;
             dBuffer = 0;
+            // THIS CODE IS SHITTY AS HELL, WHY DO I DIE NO MATTER WHAT?
             myCondition = Condition.dying;
         }
     }

@@ -96,14 +96,19 @@ public class AsteroidLogic : MonoBehaviour
     private void DeathRoll()
     {
         myHealth.myCondition = HealthLogic.Condition.dead;
+
+        // I SHOULDN'T BE DYING HERE, I WILL COME BACK FOR YOU
         Destroy(gameObject);
     }
 
     private void OnDestroy()
     {
+        Explode();
         // On death, subtract my budget value from on-screen budget
         
         // THIS CANNOT STAY, IT MUST BE FIXED. FINISH DirectorLogic PLEASE
+        
+        // (me from future) // DID I EVEN FIX IT? FUCK, WHAT AM I SUPPOSED TO DO NOW?
 
         //dirLogic.budget -= budgetValue;
     }
