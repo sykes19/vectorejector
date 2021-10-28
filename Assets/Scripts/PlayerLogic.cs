@@ -5,26 +5,95 @@ using UnityEngine;
 public class PlayerLogic : MonoBehaviour
 {
     // Component references
+    // Director creates us, and gives us this reference
     public DirectorLogic dirLogic;
     Rigidbody2D rb;
     Renderer rend;
+    HealthLogic myHealth;
     // Core values
     public Vector2 aimAngle;
     public float aimDistance;
-    HealthLogic myHealth;
+
     public int budgetCost;
     public int healthMax;
-    float horizontal;
-    float vertical;
+
+    public float maxAccel;
     public float speed;
+    public Vector2 impulseCache;
+    private Vector2 impulse;
+    public float impulseDecayRate;
+    private Vector2 impulseDecay;
+    private Vector2 targetVelocity;
+    private float minSpeed;
+    private Vector2 input;
+    
 
     // Start is called before the first frame update
     void Awake()
     {
+        maxAccel = 1.0f;
+        speed = 400f;
+
+        // Decay 10% of total impulse per second
+        impulseDecayRate = 1.0f;
+
         rb = GetComponent<Rigidbody2D>();
         rend = GetComponent<Renderer>();
     }
 
+    private void Update()
+    {
+        // DEBUG
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            impulseCache += aimAngle * (aimDistance * 0.2f);
+        }
+        // END DEBUG
+        input = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"));
+        AimShip();
+    }
+    void FixedUpdate()
+    {
+        ImpulseUpdate();
+        MoveShip(input);
+    }
+
+#region Moving
+    void ImpulseUpdate()
+    {
+        float speedCutoff = 0.1f;
+        // Add new forces to the current impulse amount
+        impulse += impulseCache;
+        // If we've received new forces, calculate a new decay rate
+        // And set minimum speed at 10% of current total impulse
+        if (impulseCache != Vector2.zero)
+        {
+            minSpeed = (Mathf.Abs(impulse.x) + Mathf.Abs(impulse.y)) * speedCutoff;
+            impulseDecay = impulse * impulseDecayRate;
+        }
+        // Get absolute speed values of impulse and decay
+        float currentSpeed = Mathf.Abs(impulse.x) + Mathf.Abs(impulse.y);
+        // Decay impulse by percentage (impulseDecay) every second
+        if (currentSpeed > minSpeed)
+        {
+            impulse -= impulseDecay * Time.fixedDeltaTime;
+        }
+        else {impulse = Vector2.zero;}
+        // Clear out impulse cache
+        impulseCache = Vector2.zero;
+    }
+    void MoveShip(Vector2 input)
+    {
+         // If moving diagonally, reduce velocity down to 71% on each axis
+        if (Mathf.Abs(input.x) == 1f && Mathf.Abs(input.y) == 1f)
+                {targetVelocity = input * 0.71f;}
+        else    {targetVelocity = input;}
+        // Add impulse velocity after all normal movement. Impulse is currently always zero.
+        targetVelocity = (targetVelocity * (speed)) * Time.fixedDeltaTime;
+        rb.velocity = targetVelocity + impulse;
+    }
+#endregion
+#region Aiming
     void AimShip()
     {
         // Find location of mouse.
@@ -40,18 +109,6 @@ public class PlayerLogic : MonoBehaviour
 
         transform.up = aimAngle;
     }
-
-    private void Update()
-    {
-        AimShip();
-    }
-
+#endregion
     // Update is called once per frame
-    void FixedUpdate()
-    {
-        // Move the ship around
-        horizontal = Input.GetAxis("Horizontal");
-        vertical = Input.GetAxis("Vertical");
-        rb.velocity = (new Vector2(horizontal, vertical) * speed);
-    }
 }
