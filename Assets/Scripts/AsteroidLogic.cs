@@ -103,18 +103,21 @@ public class AsteroidLogic : MonoBehaviour
 
     private void OnDestroy()
     {
+        // Apply knockback impulse in an AoE. Temporary?
         Explode();
-        // On death, subtract my budget value from on-screen budget
-        
-        // THIS CANNOT STAY, IT MUST BE FIXED. FINISH DirectorLogic PLEASE
-        
-        // (me from future) // DID I EVEN FIX IT? FUCK, WHAT AM I SUPPOSED TO DO NOW?
 
+        // Ok, the code below is my old solution. Director needs to keep track of this himself though.
+        // Nobody should be allowed to tell the Director what to do, ever.
+        // This needs to be changed later. This is a reminder.
+
+        // On death, subtract my budget value from on-screen budget
         //dirLogic.budget -= budgetValue;
     }
 
     private void Explode()
     {
+        // NOTE: This is old code, will it work with player Impulse? It's still good code.
+
         // Knockback AoE
         // Create a circular effect, and capture the IDs of every nearby collider
         // Apply a force to each collider in range and knock it back

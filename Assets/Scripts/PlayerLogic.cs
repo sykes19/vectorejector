@@ -7,6 +7,7 @@ public class PlayerLogic : MonoBehaviour
     // Component references
     // Director creates us, and gives us this reference
     public DirectorLogic dirLogic;
+    WeaponLogic weapon;
     Rigidbody2D rb;
     Renderer rend;
     HealthLogic myHealth;
@@ -17,7 +18,6 @@ public class PlayerLogic : MonoBehaviour
     public int budgetCost;
     public int healthMax;
 
-    public float maxAccel;
     public float speed;
     public Vector2 impulseCache;
     private Vector2 impulse;
@@ -31,12 +31,12 @@ public class PlayerLogic : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        maxAccel = 1.0f;
         speed = 400f;
 
         // Decay 10% of total impulse per second
         impulseDecayRate = 1.0f;
 
+        weapon = GetComponent<WeaponLogic>();
         rb = GetComponent<Rigidbody2D>();
         rend = GetComponent<Renderer>();
     }
@@ -44,13 +44,20 @@ public class PlayerLogic : MonoBehaviour
     private void Update()
     {
         // DEBUG
-        if (Input.GetKeyDown(KeyCode.F2))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             impulseCache += aimAngle * (aimDistance * 0.2f);
         }
         // END DEBUG
+
+        // Input capture. Applies to FixedUpdate()
         input = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"));
         AimShip();
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            weapon.Fire(1);
+        }
     }
     void FixedUpdate()
     {
@@ -88,7 +95,7 @@ public class PlayerLogic : MonoBehaviour
         if (Mathf.Abs(input.x) == 1f && Mathf.Abs(input.y) == 1f)
                 {targetVelocity = input * 0.71f;}
         else    {targetVelocity = input;}
-        // Add impulse velocity after all normal movement. Impulse is currently always zero.
+        // Add impulse velocity after all normal movement.
         targetVelocity = (targetVelocity * (speed)) * Time.fixedDeltaTime;
         rb.velocity = targetVelocity + impulse;
     }
@@ -108,6 +115,7 @@ public class PlayerLogic : MonoBehaviour
         aimDistance = Vector2.Distance(myPosition, mousePosition);
 
         transform.up = aimAngle;
+        aimAngle = aimAngle.normalized;
     }
 #endregion
     // Update is called once per frame
