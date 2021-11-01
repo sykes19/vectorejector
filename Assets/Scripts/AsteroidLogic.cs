@@ -74,6 +74,10 @@ public class AsteroidLogic : MonoBehaviour
         if (directionOld != direction)
             UpdateMovement();
 
+    }
+
+    private void Update()
+    {
         // If I've been seen before, destroy self off screen
         if (rend.isVisible == false && seen == true)
             myHealth.myCondition = HealthLogic.Condition.dying;
@@ -85,12 +89,7 @@ public class AsteroidLogic : MonoBehaviour
         if (myHealth.myCondition == HealthLogic.Condition.dying)
         {
             DeathRoll();
-        }
-    }
-
-    private void Update()
-    {
-        
+        }       
     }
 
     private void DeathRoll()

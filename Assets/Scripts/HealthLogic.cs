@@ -28,13 +28,8 @@ public class HealthLogic : MonoBehaviour
     {
         myCondition = Condition.alive;
     }
-
+    
     void Update()
-    {
-        
-    }
-
-    void FixedUpdate()
     {
         if (dBuffer > 0)
         {
@@ -45,6 +40,11 @@ public class HealthLogic : MonoBehaviour
             {
                 myCondition = Condition.dying;
             }
-        }
+        }     
+    }
+
+    void FixedUpdate()
+    {
+
     }
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7453594932296474576}
   - component: {fileID: 2058619864030993304}
   m_Layer: 0
-  m_Name: ShotObj_K
+  m_Name: ShotObj_E
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,8 +29,8 @@ Transform:
   m_GameObject: {fileID: 5373505498459475405}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.4, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.22, y: 3.74, z: 5.5}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -51,6 +51,7 @@ MonoBehaviour:
   hitbox: {fileID: 0}
   damage: 0
   speed: 0
+  spin: 0
   shotAngle: 0
   direction: {x: 0, y: 0, z: 0}
 --- !u!212 &3374712928706755531
@@ -94,7 +95,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e85d535dc92acce4ca5284bf6ec60a83, type: 3}
+  m_Sprite: {fileID: 21300000, guid: df6404e1c4876a7458fccd477fb9541d, type: 3}
   m_Color: {r: 0.50450444, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -130,17 +131,22 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.099999994, y: 0.64}
-      - {x: -0.079367444, y: 0.64}
-      - {x: -0.44, y: 0.32}
-      - {x: -0.44000003, y: 0.2899062}
-      - {x: -0.44, y: 0.19999999}
-      - {x: -0.07, y: -0.63}
-      - {x: -0.049999997, y: -0.64}
-      - {x: 0.07, y: -0.64}
-      - {x: 0.44, y: 0.13}
-      - {x: 0.44, y: 0.25}
-      - {x: 0.42, y: 0.28}
+    - - {x: 0.39, y: -0.28}
+      - {x: 0.57, y: -0.34}
+      - {x: 0.59999996, y: -0.34}
+      - {x: 0.64, y: -0.32}
+      - {x: 0.64, y: -0.25}
+      - {x: 0.02, y: 0.37}
+      - {x: -0.02, y: 0.37}
+      - {x: -0.64, y: -0.25}
+      - {x: -0.64, y: -0.31}
+      - {x: -0.63, y: -0.32999998}
+      - {x: -0.61, y: -0.34}
+      - {x: -0.56, y: -0.34}
+      - {x: -0.51, y: -0.32999998}
+      - {x: -0.38, y: -0.28}
+      - {x: -0.06, y: -0.17}
+      - {x: -0.02, y: -0.14999999}
 --- !u!50 &2058619864030993304
 Rigidbody2D:
   serializedVersion: 4
