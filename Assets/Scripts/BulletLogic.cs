@@ -7,7 +7,7 @@ public class BulletLogic : MonoBehaviour
     public int speed;
     public int damage;
     Rigidbody2D rb;
-    // Start is called before the first frame update
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -23,7 +23,7 @@ public class BulletLogic : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    // Update is called once per frame
+
     void FixedUpdate()
     {
 

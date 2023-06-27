@@ -74,9 +74,9 @@ public class AsteroidLogic : MonoBehaviour
         if (directionOld != direction)
             UpdateMovement();
 
-        // If I've been seen before, destroy self off screen
+        // If I've been seen before, delete without triggering death roll
         if (rend.isVisible == false && seen == true)
-            myHealth.myCondition = HealthLogic.Condition.dying;
+            Destroy(gameObject);
         // If I'm being seen for the first time, make note
         else if (rend.isVisible == true && seen == false)
             seen = true;
@@ -96,7 +96,8 @@ public class AsteroidLogic : MonoBehaviour
     private void DeathRoll()
     {
         myHealth.myCondition = HealthLogic.Condition.dead;
-        Explode();
+        //Explode();
+        // *** I like the explosion code, but not on death
         Destroy(gameObject);
     }
 
@@ -122,14 +123,18 @@ public class AsteroidLogic : MonoBehaviour
             if (targetRB != null)
             {
                 float distance = Vector3.Distance(transform.position, hit.transform.position);
-                // Decrease strength based on distance to edge of radius, linear
-                float pushStrength = deathStrength * (1 - (distance / deathRadius));
+                // Decrease strength based on distance to edge of radius
+                float pushStrength = deathStrength * (0.7f - (distance / deathRadius));
+                // Clamp strength at 20% of max
+                float minStr = deathStrength * 0.2f;
+                if (pushStrength < minStr)
+                    pushStrength = minStr;
 
-                // Grab an angle to the target, normalize it, and multiply it by strength
+                // Determine the direction the target needs pushed
                 Vector2 targetPush = hit.transform.position - transform.position;
                 targetPush = targetPush.normalized * pushStrength;
 
-                // Add force to target based on normalized vectory * strength
+                // Add force to target based on normalized vector * strength
                 targetRB.AddForce(targetPush, ForceMode2D.Impulse);
             }
 

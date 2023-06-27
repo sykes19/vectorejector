@@ -131,6 +131,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 838312625562209501, guid: 8f7438b71485ad548b9f6b2a12492d47, type: 3}
+      propertyPath: m_SortingOrder
+      value: -1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2725719035480272123, guid: 8f7438b71485ad548b9f6b2a12492d47, type: 3}
+      propertyPath: m_SortingOrder
+      value: -1000
+      objectReference: {fileID: 0}
     - target: {fileID: 8168458642921566420, guid: 8f7438b71485ad548b9f6b2a12492d47, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -278,6 +286,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1291833125351879020, guid: d519106f1e31e434f88a743475205797, type: 3}
+      propertyPath: orthographic size
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1291833125351879020, guid: d519106f1e31e434f88a743475205797, type: 3}
+      propertyPath: m_AllowDynamicResolution
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1291833125351879020, guid: d519106f1e31e434f88a743475205797, type: 3}
+      propertyPath: m_NormalizedViewPortRect.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1291833125351879020, guid: d519106f1e31e434f88a743475205797, type: 3}
+      propertyPath: m_NormalizedViewPortRect.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7554415852500263696, guid: d519106f1e31e434f88a743475205797, type: 3}
       propertyPath: m_Name
       value: GameScreen

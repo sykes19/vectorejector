@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static PlayerLogic;
 
 public class DirectorSpawnLogic : MonoBehaviour
 {
+    #region INIT
     // Prefab references
     public GameObject asteroidObj;
     public GameObject playerObj;
     public DirectorLogic dirLogic;
+    PlayerLogic pLogic;
     // Spawning related
     private Vector3 mouseLocation;
     private Vector3 mousePosition;
@@ -15,13 +18,16 @@ public class DirectorSpawnLogic : MonoBehaviour
     private Vector3 spawnH;
     private Vector3 spawnV;
     // Currency related
-    private float spawnInterval = 1;
-    private float timer = 0;
+    private float spawnInterval;
+    private float timer;
 
+    #endregion
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        // Failsafe spawn timer
+        if (spawnInterval == 0)
+            spawnInterval = 1;
         dirLogic = GetComponent<DirectorLogic>();
 
         // Detect screen size and bind them to valuble coordinates
@@ -32,10 +38,52 @@ public class DirectorSpawnLogic : MonoBehaviour
         SpawnPlayer();
 
     }
+    void Update()
+    {
+        if (timer >= spawnInterval)
+        {
+            // Spend 40 budget coins (budgies) on asteroids on a set interval.
+            SpawnAsteroid(40);
+            timer -= spawnInterval;
+        }
+        timer += Time.deltaTime;
 
+
+
+        #region DEBUG
+        ///////// BEGIN DEBUG SHIT //////////////
+        // Capture mouse location, and then convert that to the proper value based on the camera space
+        mouseLocation = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
+        mousePosition = Camera.main.ScreenToWorldPoint(mouseLocation);
+        mousePosition.z = 0;
+
+        if (Input.GetKeyDown(KeyCode.F4))
+        {
+
+            // Spawn asteroid on mouse, for debug purposes
+            Instantiate(asteroidObj, mousePosition, Quaternion.identity);
+        }
+
+        // Force form changes
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            pLogic.FormChange(Form.arcade);
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            pLogic.FormChange(Form.classic);
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+            pLogic.FormChange(Form.open);
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+            pLogic.FormChange(Form.side);
+        ////////// END DEBUG SHIT ////////////
+        #endregion 
+    }
     void SpawnPlayer()
     {
-        Instantiate(playerObj, new Vector2(0,0), Quaternion.identity);
+        GameObject player = Instantiate(playerObj, new Vector2(0,0), Quaternion.identity);
+        pLogic = player.GetComponent<PlayerLogic>();
+        if(pLogic == null )
+            print("pLogic is null!");
+        else
+            print("pLogic found");
     }
 
     // This method spawns asteroids until the budget you give it runs empty
@@ -72,44 +120,5 @@ public class DirectorSpawnLogic : MonoBehaviour
             // Some asteroids might have unique values; this is future proofing
             i -= astLogic.budgetCost;
         }
-
-    }
-
-    void Update()
-    {
-        if (timer >= spawnInterval)
-        {
-            // Spend 40 budget coins (budgies) on asteroids on a set interval.
-            SpawnAsteroid(40);
-            timer -= spawnInterval;
-        }
-        timer += Time.deltaTime;
-
-
-        // This is just a region. Don't be scared.
-        #region DEBUG SHIT
-        ///////// BEGIN DEBUG SHIT //////////////
-        // Capture mouse location, and then convert that to the proper value based on the camera space
-        mouseLocation = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
-        mousePosition = Camera.main.ScreenToWorldPoint(mouseLocation);
-        mousePosition.z = 0;
- 
-        if (Input.GetKeyDown(KeyCode.F4))
-        {
- 
-            // Spawn asteroid on mouse, for debug purposes
-            Instantiate(asteroidObj, mousePosition, Quaternion.identity);
-        }
-
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            // Raycast directly downward based on mouse and receive reference to object hit
-            RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
-            if (hit.collider.gameObject.CompareTag("Enemy"))
-                hit.collider.GetComponent<HealthLogic>().dBuffer += 1000;
-            
-        }
-        ////////// END DEBUG SHIT ////////////
-        #endregion 
     }
 }
