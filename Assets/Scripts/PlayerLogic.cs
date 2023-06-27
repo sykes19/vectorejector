@@ -7,29 +7,31 @@ public class PlayerLogic : MonoBehaviour
     // Component references
     public DirectorLogic dirLogic;
     Rigidbody2D rb;
-    Renderer rend;
+    HealthLogic myHealth;
+    public GameObject bullet;
     // Core values
     public Vector2 aimAngle;
     public float aimDistance;
-    HealthLogic myHealth;
     public int budgetCost;
     public int healthMax;
     float horizontal;
     float vertical;
     public float speed;
+    float fireTimer;
+    public float fireDelay;
 
     // Start is called before the first frame update
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        rend = GetComponent<Renderer>();
+        myHealth = GetComponent<HealthLogic>();
+        myHealth.hp = healthMax;
     }
 
     void AimShip()
     {
         // Find location of mouse.
-        Vector2 mouseLocation = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(mouseLocation);
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 myPosition = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
         aimAngle = new Vector2(
             mousePosition.x - myPosition.x,
@@ -38,12 +40,31 @@ public class PlayerLogic : MonoBehaviour
         // Write down the distance in case we need it
         aimDistance = Vector2.Distance(myPosition, mousePosition);
 
+        // Rotate on the "up" axis to match the proper direction
         transform.up = aimAngle;
+    }
+    void FireWeapon()
+    {
+        // Can I fire yet?
+        if (fireTimer <= 0)
+        {
+            GameObject shot = Instantiate(bullet, transform.position, Quaternion.identity);
+            shot.transform.up = transform.up;
+            fireTimer = fireDelay;
+        }
+     
     }
 
     private void Update()
     {
+        fireTimer -= Time.deltaTime;
         AimShip();
+        if (Input.GetMouseButton(0))
+        {
+            FireWeapon();
+        }
+
+
     }
 
     // Update is called once per frame
@@ -51,6 +72,10 @@ public class PlayerLogic : MonoBehaviour
     {
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
+        Vector2 dir = new Vector2 (horizontal, vertical);
+        transform.position += new Vector3(dir.x, dir.y, 0) * (speed /10 );
+        /*
         rb.velocity = (new Vector2(horizontal, vertical) * speed);
+        */
     }
 }

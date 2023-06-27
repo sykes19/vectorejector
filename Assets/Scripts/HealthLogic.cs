@@ -5,7 +5,7 @@ using UnityEngine;
 public class HealthLogic : MonoBehaviour
 {
     public int dBuffer;
-    public int health;
+    public int hp;
     
     // Your condition is whether or not you are alive or dead, or flagged for death cleanup.
     public enum Condition
@@ -38,8 +38,11 @@ public class HealthLogic : MonoBehaviour
     {
         if (dBuffer > 0)
         {
-            health -= dBuffer;
+            hp -= dBuffer;
             dBuffer = 0;
+        }
+        if (hp <= 0)
+        {
             myCondition = Condition.dying;
         }
     }

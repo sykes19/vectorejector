@@ -42,7 +42,7 @@ public class AsteroidLogic : MonoBehaviour
 
         // Attach to health script, and tell it how beeg boi I am
         myHealth = GetComponent<HealthLogic>();
-        myHealth.health = healthMax;
+        myHealth.hp = healthMax;
 
         // Set initial values in case nothing else gives me any orders.
         speed *= Random.Range(0.5f,2.5f);                   // Random speed
@@ -96,6 +96,7 @@ public class AsteroidLogic : MonoBehaviour
     private void DeathRoll()
     {
         myHealth.myCondition = HealthLogic.Condition.dead;
+        Explode();
         Destroy(gameObject);
     }
 

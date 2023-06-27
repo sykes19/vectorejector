@@ -104,7 +104,7 @@ NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 2
+    serializedVersion: 3
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -117,7 +117,7 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    buildHeightMesh: 0
     maxJobWorkers: 0
     preserveTilesOutsideBounds: 0
     debug:
@@ -128,6 +128,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 8168458642921566420, guid: 8f7438b71485ad548b9f6b2a12492d47, type: 3}
@@ -179,12 +180,34 @@ PrefabInstance:
       value: StarSpawnerObj
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f7438b71485ad548b9f6b2a12492d47, type: 3}
+--- !u!1 &982336876 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4125292312854719458, guid: 3a290e2b86d2e1c40bad44aedc357864, type: 3}
+  m_PrefabInstance: {fileID: 4125292311943308130}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &982336879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 982336876}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58cff8c0291818540b177e54d143a23c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  asteroid: {fileID: 5889006523965574343, guid: 1ced53be34c36d3438ae44a6c8a52c2f, type: 3}
 --- !u!1001 &4125292311943308130
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 4125292312854719458, guid: 3a290e2b86d2e1c40bad44aedc357864, type: 3}
@@ -235,13 +258,24 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8755596184199704444, guid: 3a290e2b86d2e1c40bad44aedc357864, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4125292312854719458, guid: 3a290e2b86d2e1c40bad44aedc357864, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 982336879}
   m_SourcePrefab: {fileID: 100100000, guid: 3a290e2b86d2e1c40bad44aedc357864, type: 3}
 --- !u!1001 &4195081896458688620
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 7554415852500263696, guid: d519106f1e31e434f88a743475205797, type: 3}
@@ -293,4 +327,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d519106f1e31e434f88a743475205797, type: 3}
