@@ -22,7 +22,34 @@ public class PlayerLogic : MonoBehaviour
     public float speed;
     float fireTimer;
     public float fireDelay;
-
+    #endregion
+    #region Ship Form Init
+    // Ship transformation values
+    public float formChangeDuration = 0.7f;
+    private float formChangeTimer;
+    private Vector3 leftWingStartScale;
+    private Vector3 rightWingStartScale;
+    private Vector3 leftWingTargetScale;
+    private Vector3 rightWingTargetScale;
+    private Vector3 leftWingStartPos;
+    private Vector3 leftWingTargetPos;
+    private Vector3 rightWingStartPos;
+    private Vector3 rightWingTargetPos;
+    private Quaternion leftWingStartRot;
+    private Quaternion leftWingTargetRot;
+    private Quaternion rightWingStartRot;
+    private Quaternion rightWingTargetRot;
+    private Vector3 Lpos;
+    private Vector3 Rpos;
+    private Vector3 Lscl;
+    private Vector3 Rscl;
+    private float Lrot;
+    private float Rrot;
+    private float maxTilt = 0.4f;
+    private float tiltSpeed = 10f;
+    private bool isTransforming;
+    Transform Lt;
+    Transform Rt;
     #endregion
     public enum Form
     {
@@ -35,29 +62,24 @@ public class PlayerLogic : MonoBehaviour
 
     void Awake()
     {
+        Lt = leftWing.transform;
+        Rt = rightWing.transform;
         myForm = Form.arcade;
+        FormChange(myForm);
         rb = GetComponent<Rigidbody2D>();
         myHealth = GetComponent<HealthLogic>();
         myHealth.hp = healthMax;
+
     }
 
     void Update()
     {
+        // Mandatory visual and input updates
+        FormUpdate(myForm);
         fireTimer -= Time.deltaTime;
-        // Determine how the ship aims based on form
-        if (myForm == Form.open || myForm == Form.arcade)
-            AimShip();
-        else if (myForm == Form.classic)
-            aimAngle = new Vector2 (0, 1);
-        else if (myForm == Form.side)
-            aimAngle = new Vector2 (1, 0);
-        // Face ship toward proper angle
         transform.up = aimAngle;
-
         if (Input.GetMouseButton(0))
-        {
             FireWeapon();
-        }
 
         #region DEBUG
         // ***DEBUG***
@@ -72,17 +94,18 @@ public class PlayerLogic : MonoBehaviour
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
         Vector2 dir = new Vector2(horizontal, vertical);
-        transform.position += new Vector3(dir.x, dir.y, 0) * (speed / 10);
+        dir.Normalize();
+        transform.position += new Vector3(dir.x, dir.y, 0) * (speed / 10); // Magic number? :x
     }
 
     public void FormChange(Form form)
     {
-        float Lrot = 0f;
-        float Rrot = 0f;
-        Vector3 Lpos = Vector3.zero;
-        Vector3 Rpos = Vector3.zero;
-        Vector3 Lscl = Vector3.zero;
-        Vector3 Rscl = Vector3.zero;
+        Lrot = 0f;  // Zero this shit out to start fresh
+        Rrot = 0f;
+        Lpos = Vector3.zero;
+        Rpos = Vector3.zero;
+        Lscl = Vector3.zero;
+        Rscl = Vector3.zero;
 
         // Prepare the values needed to transform the ship's looks based on the form
         switch (form)
@@ -100,10 +123,10 @@ public class PlayerLogic : MonoBehaviour
                 }
             case Form.side:
                 {
-                    Lpos = new Vector3(0, 0, -5);
+                    Lpos = new Vector3(0, 0, 0);
                     Lrot = 0;
                     Lscl = new Vector3(0.6f, 1, 1);
-                    Rpos = new Vector3(0, 0, 5);
+                    Rpos = new Vector3(0, 0, 0);
                     Rrot = 0;
                     Rscl = new Vector3(0.6f, 1, 1);
                     myForm = Form.side;
@@ -132,16 +155,73 @@ public class PlayerLogic : MonoBehaviour
                     break;
                 }
         }
-        // Adjust wings to match form
-        leftWing.transform.localPosition = Lpos;
-        leftWing.transform.localScale = Lscl;
+        // Convert desired rotation float into useable quaternion
         Quaternion desiredLrot = Quaternion.Euler(0f, 0f, Lrot);
-        leftWing.transform.localRotation = desiredLrot;
-
-        rightWing.transform.localPosition = Rpos;
-        rightWing.transform.localScale = Rscl;
         Quaternion desiredRrot = Quaternion.Euler(0f, 0f, Rrot);
-        rightWing.transform.localRotation = desiredRrot;
+
+        // Set beginning and end values for FormUpdate to process each frame
+        leftWingStartPos = Lt.localPosition;
+        leftWingTargetPos = Lpos;
+        leftWingStartScale = Lt.localScale;
+        leftWingTargetScale = Lscl;
+        leftWingStartRot = Lt.localRotation;
+        leftWingTargetRot = desiredLrot;
+
+        rightWingStartPos = Rt.localPosition;
+        rightWingTargetPos = Rpos;
+        rightWingStartScale = Rt.localScale;
+        rightWingTargetScale = Rscl;
+        rightWingStartRot = Rt.localRotation;
+        rightWingTargetRot = desiredRrot;
+
+        formChangeTimer = 0f;   // Reset transformation timer
+    }
+
+    void FormUpdate(Form myForm)
+    {
+        // Update visual transformation if necessary
+        if (formChangeTimer < formChangeDuration)
+        {
+            isTransforming = true;
+            formChangeTimer += Time.deltaTime;
+            float t = formChangeTimer / formChangeDuration;
+            Lt.localPosition = Vector3.Lerp(leftWingStartPos, leftWingTargetPos, t);
+            Rt.localPosition = Vector3.Lerp(rightWingStartPos, rightWingTargetPos, t);
+            Lt.localScale = Vector3.Lerp(leftWingStartScale, leftWingTargetScale, t);
+            Rt.localScale = Vector3.Lerp(rightWingStartScale, rightWingTargetScale, t);
+            Lt.localRotation = Quaternion.Slerp(leftWingStartRot, leftWingTargetRot, t);
+            Rt.localRotation = Quaternion.Slerp(rightWingStartRot, rightWingTargetRot, t);
+        }
+        else
+            isTransforming = false;
+
+        // Restrict or allow aiming based on form, and do form-specific bullshit
+        if (myForm == Form.open || myForm == Form.arcade)
+            AimShip();
+        else if (myForm == Form.classic)
+            aimAngle = new Vector2(0, 1);
+        else if (myForm == Form.side)
+        {
+            aimAngle = new Vector2(1, 0);
+            // Tilt wings by sliding on X axis based on vertical input held
+            if (!isTransforming && Mathf.Abs(vertical) >= 0.2)
+            {
+                // Make the equation work for both up and down movement
+                float targetX = (maxTilt * Mathf.Sign(vertical));
+                // Take into account potential differences in default pos for L and R wings
+                float targetXL = leftWingTargetPos.x + maxTilt;
+                float targetXR = rightWingTargetPos.x + maxTilt;
+                Vector3 targetPositionL = new Vector3(targetXL, Lt.localPosition.y, Lt.localPosition.z);
+                Vector3 targetPositionR = new Vector3(-targetXR, Rt.localPosition.y, Rt.localPosition.z);
+                Lt.localPosition = Vector3.Lerp(Lt.localPosition, targetPositionL, Time.deltaTime * tiltSpeed);
+                Rt.localPosition = Vector3.Lerp(Rt.localPosition, targetPositionR, Time.deltaTime * tiltSpeed);
+            }
+            else    // Reset to neutral when nothing is being held
+            {
+                Lt.localPosition = Vector3.Lerp(Lt.localPosition, leftWingTargetPos, Time.deltaTime * tiltSpeed);
+                Rt.localPosition = Vector3.Lerp(Rt.localPosition, rightWingTargetPos, Time.deltaTime * tiltSpeed);
+            }
+        }
     }
     void AimShip()
     {
@@ -163,11 +243,6 @@ public class PlayerLogic : MonoBehaviour
             GameObject shot = Instantiate(bullet, transform.position, Quaternion.identity);
             shot.transform.up = transform.up;
             fireTimer = fireDelay;
-        }
-     
+        }  
     }
-
-
-
-
 }

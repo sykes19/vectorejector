@@ -615,7 +615,7 @@ Transform:
   m_GameObject: {fileID: 6344401201593979898}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1394241357136742435}
@@ -660,8 +660,9 @@ MonoBehaviour:
   aimDistance: 0
   budgetCost: 0
   healthMax: 100
-  speed: 1.5
+  speed: 1.3
   fireDelay: 0.2
+  formChangeDuration: 0.7
   myForm: 3
 --- !u!50 &1198321152063082382
 Rigidbody2D:

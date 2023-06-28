@@ -80,10 +80,6 @@ public class DirectorSpawnLogic : MonoBehaviour
     {
         GameObject player = Instantiate(playerObj, new Vector2(0,0), Quaternion.identity);
         pLogic = player.GetComponent<PlayerLogic>();
-        if(pLogic == null )
-            print("pLogic is null!");
-        else
-            print("pLogic found");
     }
 
     // This method spawns asteroids until the budget you give it runs empty
