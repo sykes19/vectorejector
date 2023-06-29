@@ -1,54 +1,74 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Json;
 using UnityEngine;
-using static PlayerLogic;
+using static StaticBullshit;
 
 public class DirectorSpawnLogic : MonoBehaviour
 {
     #region INIT
+    public Form gameForm;
     // Prefab references
     public GameObject asteroidObj;
     public GameObject playerObj;
+    public GameObject starObj;
     public DirectorLogic dirLogic;
     PlayerLogic pLogic;
     // Spawning related
-    private Vector3 mouseLocation;
-    private Vector3 mousePosition;
-    private Vector2 fieldSize;
-    private Vector3 spawnH;
-    private Vector3 spawnV;
+    Vector3 mouseLocation;
+    Vector3 mousePosition;
+    Vector3 spawnH;
+    Vector3 spawnV;
+    public int starCount;
+    public int bakedStars;
+    Vector2 starSpawnLoc;
     // Currency related
-    private float spawnInterval;
-    private float timer;
+    public float astInterval;
+    float astTimer;
+    public float starInterval;
+    public float starIntervalAdjusted;
+    float starTimer;
+
 
     #endregion
 
     void Awake()
     {
+        UpdateScreenSize();
+        gameForm = Form.arcade;
         // Failsafe spawn timer
-        if (spawnInterval == 0)
-            spawnInterval = 1;
+        if (astInterval == 0)
+            astInterval = 1;
         dirLogic = GetComponent<DirectorLogic>();
 
-        // Detect screen size and bind them to valuble coordinates
-        float screenAspect = (float)Screen.width / (float)Screen.height;
-        fieldSize.y = Camera.main.orthographicSize;
-        fieldSize.x = fieldSize.y * screenAspect;
+
 
         SpawnPlayer();
+        // Spawn with a bunch of baked stars
+        for (int i = 0; i < bakedStars; i++)
+        {
+            SpawnStar(true);
+        }
 
     }
     void Update()
     {
-        if (timer >= spawnInterval)
+        // Update global variables for screen size
+        UpdateScreenSize();
+        // Asteroid spawn timer
+        if (astTimer >= astInterval)
         {
-            // Spend 40 budget coins (budgies) on asteroids on a set interval.
             SpawnAsteroid(40);
-            timer -= spawnInterval;
+            astTimer -= astInterval;
         }
-        timer += Time.deltaTime;
-
-
+        // Star spawn timer
+        if (starTimer >= starIntervalAdjusted)
+        {
+            SpawnStar(false);
+            starTimer -= starIntervalAdjusted;
+        }
+        astTimer += Time.deltaTime;
+        starTimer += Time.deltaTime;
 
         #region DEBUG
         ///////// BEGIN DEBUG SHIT //////////////
@@ -66,28 +86,77 @@ public class DirectorSpawnLogic : MonoBehaviour
 
         // Force form changes
         if (Input.GetKeyDown(KeyCode.Alpha1))
-            pLogic.FormChange(Form.arcade);
+            SetForm(Form.arcade);
         if (Input.GetKeyDown(KeyCode.Alpha2))
-            pLogic.FormChange(Form.classic);
+            SetForm(Form.classic);
         if (Input.GetKeyDown(KeyCode.Alpha3))
-            pLogic.FormChange(Form.open);
+            SetForm(Form.open);
         if (Input.GetKeyDown(KeyCode.Alpha4))
-            pLogic.FormChange(Form.side);
+            SetForm(Form.side);
         ////////// END DEBUG SHIT ////////////
         #endregion 
+    }
+    void UpdateScreenSize()
+    {
+        // Detect screen size and bind them to global variables
+        float screenAspect = (float)Screen.width / (float)Screen.height;
+        fieldSize.y = Camera.main.orthographicSize;
+        fieldSize.x = fieldSize.y * screenAspect;
+    }
+    void SetForm(Form form)
+    {
+        gameForm = form;
+        pLogic.FormChange(form);
     }
     void SpawnPlayer()
     {
         GameObject player = Instantiate(playerObj, new Vector2(0,0), Quaternion.identity);
         pLogic = player.GetComponent<PlayerLogic>();
+        pLogic.FormChange(gameForm);
     }
 
-    // This method spawns asteroids until the budget you give it runs empty
-    // They spawn off screen, and are sent toward the center with random offsets
+    void SpawnStar(bool visible)
+    {
+        /* This method spawns a star either visibly in a random spot on the screen, or
+        off of the edge of the screen */
+        float randX = Random.Range(-fieldSize.x, fieldSize.x);
+        float randY = Random.Range(-fieldSize.y, fieldSize.y);
+        float buffer = 1.05f;
+        // If spawning a baked star, ignore edge spawn logic and do true random
+        if (visible)
+            starSpawnLoc = new Vector2(randX, randY);
+        else
+        {
+            if (gameForm == Form.arcade)
+            {
+                // Spawn from south
+                starSpawnLoc = new Vector2(randX, -fieldSize.y * buffer);
+            }
+            else if (gameForm == Form.open)
+            {
+                // Spawn from south??
+                starSpawnLoc = new Vector2(randX, -fieldSize.y * buffer);
+            }
+            else if (gameForm == Form.side)
+            {
+                // Spawn from east
+                starSpawnLoc = new Vector2(fieldSize.x * buffer, randY);
+            }
+            else if (gameForm == Form.classic)
+            {
+                // Spawn from north
+                starSpawnLoc = new Vector2(randX, fieldSize.y * buffer);
+            }
+        }
+        GameObject star = Instantiate(starObj, starSpawnLoc, Quaternion.identity);
+        star.GetComponent<StarLogic>().spawnLogic = this; // Here's my card...
+    }
     void SpawnAsteroid(int budgetLimit)
     {
+        // This method spawns asteroids until the budget you give it runs empty
+        // They spawn off screen, and are sent toward the center with random offsets
         // Spawn asteroids until your budgetLimit empties
-        for(int i = budgetLimit; i > 0;)
+        for (int i = budgetLimit; i > 0;)
         {
             // Set the boundaries for spawning and assign all possibilities to array
             spawnH = new Vector3(fieldSize.x / 0.95f, Random.Range(fieldSize.y, -fieldSize.y), 0);

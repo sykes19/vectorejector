@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static StaticBullshit;
 
 public class BulletLogic : MonoBehaviour
 {
@@ -22,10 +23,5 @@ public class BulletLogic : MonoBehaviour
             otherhp.dBuffer += damage;
             Destroy(gameObject);
         }
-    }
-
-    void FixedUpdate()
-    {
-
     }
 }

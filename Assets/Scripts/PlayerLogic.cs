@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static StaticBullshit;
 
 public class PlayerLogic : MonoBehaviour
 {
@@ -51,15 +52,7 @@ public class PlayerLogic : MonoBehaviour
     Transform Lt;
     Transform Rt;
     #endregion
-    public enum Form
-    {
-        open,
-        side,
-        classic,
-        arcade
-    }
     public Form myForm;
-
     void Awake()
     {
         Lt = leftWing.transform;
@@ -76,7 +69,7 @@ public class PlayerLogic : MonoBehaviour
     {
         // Mandatory visual and input updates
         FormUpdate(myForm);
-        fireTimer -= Time.deltaTime;
+        fireTimer += Time.deltaTime;
         transform.up = aimAngle;
         if (Input.GetMouseButton(0))
             FireWeapon();
@@ -209,8 +202,8 @@ public class PlayerLogic : MonoBehaviour
                 // Make the equation work for both up and down movement
                 float targetX = (maxTilt * Mathf.Sign(vertical));
                 // Take into account potential differences in default pos for L and R wings
-                float targetXL = leftWingTargetPos.x + maxTilt;
-                float targetXR = rightWingTargetPos.x + maxTilt;
+                float targetXL = leftWingTargetPos.x + targetX;
+                float targetXR = rightWingTargetPos.x + targetX;
                 Vector3 targetPositionL = new Vector3(targetXL, Lt.localPosition.y, Lt.localPosition.z);
                 Vector3 targetPositionR = new Vector3(-targetXR, Rt.localPosition.y, Rt.localPosition.z);
                 Lt.localPosition = Vector3.Lerp(Lt.localPosition, targetPositionL, Time.deltaTime * tiltSpeed);
@@ -238,11 +231,11 @@ public class PlayerLogic : MonoBehaviour
     void FireWeapon()
     {
         // Can I fire yet?
-        if (fireTimer <= 0)
+        if (fireTimer >= fireDelay)
         {
             GameObject shot = Instantiate(bullet, transform.position, Quaternion.identity);
             shot.transform.up = transform.up;
-            fireTimer = fireDelay;
+            fireTimer = 0;
         }  
     }
 }

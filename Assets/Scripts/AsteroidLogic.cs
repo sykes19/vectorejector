@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static StaticBullshit;
 
 public class AsteroidLogic : MonoBehaviour
 {
@@ -8,7 +9,6 @@ public class AsteroidLogic : MonoBehaviour
     // Component references
     public DirectorLogic dirLogic;
     Rigidbody2D rb;
-    Renderer rend;
     // Core values
     public Vector2 direction;
     HealthLogic myHealth;
@@ -17,7 +17,6 @@ public class AsteroidLogic : MonoBehaviour
     // Movement related
     public float speed;
     public float angle;
-    private bool seen;
     private Vector2 directionOld;
     // Explosion code, currently disabled
     public float deathRadius;
@@ -31,11 +30,7 @@ public class AsteroidLogic : MonoBehaviour
         if (budgetCost == 0)
             budgetCost = 20;
 
-        // I spawn out of view, remember this
-        seen = false;
-
         rb = GetComponent<Rigidbody2D>();
-        rend = GetComponent<Renderer>();
 
         // No physics for now. Just triggers.
         GetComponent<Collider2D>().isTrigger = true;
@@ -73,13 +68,6 @@ public class AsteroidLogic : MonoBehaviour
         // Check if outside sources tell me to move elsewhere
         if (directionOld != direction)
             UpdateMovement();
-
-        // If I've been seen before, delete without triggering death roll
-        if (rend.isVisible == false && seen == true)
-            Destroy(gameObject);
-        // If I'm being seen for the first time, make note
-        else if (rend.isVisible == true && seen == false)
-            seen = true;
 
         // Check if it's time to die
         if (myHealth.myCondition == HealthLogic.Condition.dying)
