@@ -8,13 +8,14 @@ public class PlayerLogic : MonoBehaviour
     #region INIT
     // Component references
     public DirectorLogic dirLogic;
+    public DirectorSpawnLogic spawnLogic;
     Rigidbody2D rb;
     HealthLogic myHealth;
     public GameObject bullet;
     public GameObject leftWing;
     public GameObject rightWing;
     // Core values
-    public Vector2 aimAngle;
+    public Vector3 aimAngle;
     public float aimDistance;
     public int budgetCost;
     public int healthMax;
@@ -23,6 +24,7 @@ public class PlayerLogic : MonoBehaviour
     public float speed;
     float fireTimer;
     public float fireDelay;
+    Vector3 forwardVector;
     #endregion
     #region Ship Form Init
     // Ship transformation values
@@ -57,12 +59,22 @@ public class PlayerLogic : MonoBehaviour
     {
         Lt = leftWing.transform;
         Rt = rightWing.transform;
-        myForm = Form.arcade;
-        FormChange(myForm);
         rb = GetComponent<Rigidbody2D>();
         myHealth = GetComponent<HealthLogic>();
         myHealth.hp = healthMax;
 
+    }
+
+    private void Start()
+    {
+        if (spawnLogic == null)
+        {
+            myForm = Form.arcade;
+            print("Could not find spawnLogic, overriding!");
+            spawnLogic = GameObject.Find("DirectorObj").GetComponent<DirectorSpawnLogic>();
+        }
+        myForm = spawnLogic.gameForm;
+        FormChange(myForm);
     }
 
     void Update()
@@ -83,14 +95,17 @@ public class PlayerLogic : MonoBehaviour
     }
     void FixedUpdate()
     {
+        if (myForm != spawnLogic.gameForm)
+            FormChange(spawnLogic.gameForm);
         // Movement code
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
         Vector2 dir = new Vector2(horizontal, vertical);
         dir.Normalize();
-        transform.position += new Vector3(dir.x, dir.y, 0) * (speed / 10); // Magic number? :x
+        transform.position += new Vector3(dir.x, dir.y, 0) * (speed / 10); // Magic number for precision? :x
     }
 
+    // This is a one-time order to make all necessary adjustments to change forms
     public void FormChange(Form form)
     {
         Lrot = 0f;  // Zero this shit out to start fresh
@@ -170,6 +185,7 @@ public class PlayerLogic : MonoBehaviour
         formChangeTimer = 0f;   // Reset transformation timer
     }
 
+    // This runs every frame to make form-specific checks
     void FormUpdate(Form myForm)
     {
         // Update visual transformation if necessary
@@ -221,7 +237,7 @@ public class PlayerLogic : MonoBehaviour
         // Find location of mouse.
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 myPosition = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
-        aimAngle = new Vector2(
+        aimAngle = new Vector3(
             mousePosition.x - myPosition.x,
             mousePosition.y - myPosition.y
         );
@@ -233,7 +249,12 @@ public class PlayerLogic : MonoBehaviour
         // Can I fire yet?
         if (fireTimer >= fireDelay)
         {
-            GameObject shot = Instantiate(bullet, transform.position, Quaternion.identity);
+            // Offset the shot in front of me a lil bit
+            float distance = 0.6f;
+            forwardVector = transform.up;
+            Vector3 offset = forwardVector * distance;
+            Vector3 shotSpawn = transform.position + offset;
+            GameObject shot = Instantiate(bullet, shotSpawn, Quaternion.identity);
             shot.transform.up = transform.up;
             fireTimer = 0;
         }  

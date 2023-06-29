@@ -67,6 +67,16 @@ public class DirectorSpawnLogic : MonoBehaviour
             SpawnStar(false);
             starTimer -= starIntervalAdjusted;
         }
+
+        // If stars get wiped off the screen due to rendering error, replace them all
+        if (starCount < 100)
+        {
+            for (int i = starCount; i < bakedStars; i++)
+            {
+                SpawnStar(true);
+            }
+        }
+
         astTimer += Time.deltaTime;
         starTimer += Time.deltaTime;
 
@@ -106,13 +116,11 @@ public class DirectorSpawnLogic : MonoBehaviour
     void SetForm(Form form)
     {
         gameForm = form;
-        pLogic.FormChange(form);
     }
     void SpawnPlayer()
     {
         GameObject player = Instantiate(playerObj, new Vector2(0,0), Quaternion.identity);
-        pLogic = player.GetComponent<PlayerLogic>();
-        pLogic.FormChange(gameForm);
+        player.GetComponent<PlayerLogic>().spawnLogic = this;
     }
 
     void SpawnStar(bool visible)

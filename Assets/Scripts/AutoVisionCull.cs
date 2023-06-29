@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static StaticBullshit;
 
 public class AutoVisionCull : MonoBehaviour
 {
     bool seen;
     float failsafeTimer;
-    public float neverSeenTimeLimit;
     // Start is called before the first frame update
     void Awake()
     {
