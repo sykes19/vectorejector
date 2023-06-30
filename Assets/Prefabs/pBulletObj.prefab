@@ -182,11 +182,11 @@ GameObject:
   m_Component:
   - component: {fileID: 909420890605958853}
   - component: {fileID: 652497331169587946}
-  - component: {fileID: 2246395050076529044}
   - component: {fileID: -4226601374032941111}
+  - component: {fileID: 2246395050076529044}
   - component: {fileID: 8991601147149105019}
   m_Layer: 0
-  m_Name: BulletObj
+  m_Name: pBulletObj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -220,8 +220,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae911d83889336f43805d4330df2baaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 50
+  speed: 40
   damage: 10
+  friendly: 1
+--- !u!114 &-4226601374032941111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2291205288189166308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32eea14038da39a4284025a4f29a8b1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offScreenLeniencyRatio: 1.1
+  ob: {x: 0, y: 0}
+  myAbsPos: {x: 0, y: 0}
 --- !u!50 &2246395050076529044
 Rigidbody2D:
   serializedVersion: 4
@@ -230,9 +246,9 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2291205288189166308}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 0
+  m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
@@ -247,20 +263,8 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
---- !u!114 &-4226601374032941111
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2291205288189166308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32eea14038da39a4284025a4f29a8b1e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!70 &8991601147149105019
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

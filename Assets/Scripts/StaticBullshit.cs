@@ -6,7 +6,8 @@ using UnityEngine;
 public class StaticBullshit : MonoBehaviour
 {
     public static Vector2 fieldSize;
-    public static float neverSeenTimeLimit = 4;
+    public static Form gameForm;
+    
 
     public enum Form
     {
@@ -14,5 +15,16 @@ public class StaticBullshit : MonoBehaviour
         side,
         classic,
         arcade
+    }
+    public enum Condition
+    {
+        alive,
+        dying,
+        dead
+    };
+    public enum State
+    {
+        free,
+        stunned,
     }
 }

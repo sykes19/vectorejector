@@ -1,23 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static StaticBullshit;
+using Random = UnityEngine.Random;
 
 public class PlayerLogic : MonoBehaviour
 {
     #region INIT
     // Component references
-    public DirectorLogic dirLogic;
-    public DirectorSpawnLogic spawnLogic;
     Rigidbody2D rb;
     HealthLogic myHealth;
     public GameObject bullet;
     public GameObject leftWing;
     public GameObject rightWing;
     // Core values
-    public Vector3 aimAngle;
-    public float aimDistance;
-    public int budgetCost;
+    [NonSerialized] public Vector3 aimAngle;
+    [NonSerialized] public float aimDistance;
     public int healthMax;
     float horizontal;
     float vertical;
@@ -27,6 +26,7 @@ public class PlayerLogic : MonoBehaviour
     Vector3 forwardVector;
     #endregion
     #region Ship Form Init
+    Form myForm;
     // Ship transformation values
     public float formChangeDuration = 0.7f;
     private float formChangeTimer;
@@ -54,27 +54,28 @@ public class PlayerLogic : MonoBehaviour
     Transform Lt;
     Transform Rt;
     #endregion
-    public Form myForm;
+
     void Awake()
     {
         Lt = leftWing.transform;
         Rt = rightWing.transform;
         rb = GetComponent<Rigidbody2D>();
         myHealth = GetComponent<HealthLogic>();
+    }
+    // Subscribe to the form change event
+    private void OnEnable()
+    {
         myHealth.hp = healthMax;
-
+        DirectorSpawnLogic.OnFormChange += OnFormChange;
+    }
+    private void OnDisable()
+    {
+        DirectorSpawnLogic.OnFormChange -= OnFormChange;   
     }
 
     private void Start()
     {
-        if (spawnLogic == null)
-        {
-            myForm = Form.arcade;
-            print("Could not find spawnLogic, overriding!");
-            spawnLogic = GameObject.Find("DirectorObj").GetComponent<DirectorSpawnLogic>();
-        }
-        myForm = spawnLogic.gameForm;
-        FormChange(myForm);
+        myForm = gameForm;
     }
 
     void Update()
@@ -86,28 +87,22 @@ public class PlayerLogic : MonoBehaviour
         if (Input.GetMouseButton(0))
             FireWeapon();
 
-        #region DEBUG
-        // ***DEBUG***
-        // Forcefully change ship form
-
-        //***END DEBUG***
-        #endregion
-    }
-    void FixedUpdate()
-    {
-        if (myForm != spawnLogic.gameForm)
-            FormChange(spawnLogic.gameForm);
         // Movement code
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
-        Vector2 dir = new Vector2(horizontal, vertical);
+        Vector2 dir = new(horizontal, vertical);
         dir.Normalize();
-        transform.position += new Vector3(dir.x, dir.y, 0) * (speed / 10); // Magic number for precision? :x
+        transform.position += ((60 * Time.deltaTime) * (speed / 10)) * new Vector3(dir.x, dir.y, 0); // Magic number for precision? :x
+    }
+    void FixedUpdate()
+    {
+
     }
 
     // This is a one-time order to make all necessary adjustments to change forms
-    public void FormChange(Form form)
+    void OnFormChange(Form form)
     {
+        myForm = form;
         Lrot = 0f;  // Zero this shit out to start fresh
         Rrot = 0f;
         Lpos = Vector3.zero;
@@ -220,8 +215,8 @@ public class PlayerLogic : MonoBehaviour
                 // Take into account potential differences in default pos for L and R wings
                 float targetXL = leftWingTargetPos.x + targetX;
                 float targetXR = rightWingTargetPos.x + targetX;
-                Vector3 targetPositionL = new Vector3(targetXL, Lt.localPosition.y, Lt.localPosition.z);
-                Vector3 targetPositionR = new Vector3(-targetXR, Rt.localPosition.y, Rt.localPosition.z);
+                Vector3 targetPositionL = new(targetXL, Lt.localPosition.y, Lt.localPosition.z);
+                Vector3 targetPositionR = new(-targetXR, Rt.localPosition.y, Rt.localPosition.z);
                 Lt.localPosition = Vector3.Lerp(Lt.localPosition, targetPositionL, Time.deltaTime * tiltSpeed);
                 Rt.localPosition = Vector3.Lerp(Rt.localPosition, targetPositionR, Time.deltaTime * tiltSpeed);
             }
@@ -236,7 +231,7 @@ public class PlayerLogic : MonoBehaviour
     {
         // Find location of mouse.
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 myPosition = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
+        Vector2 myPosition = new(gameObject.transform.position.x, gameObject.transform.position.y);
         aimAngle = new Vector3(
             mousePosition.x - myPosition.x,
             mousePosition.y - myPosition.y
@@ -254,8 +249,13 @@ public class PlayerLogic : MonoBehaviour
             forwardVector = transform.up;
             Vector3 offset = forwardVector * distance;
             Vector3 shotSpawn = transform.position + offset;
-            GameObject shot = Instantiate(bullet, shotSpawn, Quaternion.identity);
-            shot.transform.up = transform.up;
+            GameObject shot = ObjectPool.instance.GetPooledPBullets();
+            if (shot != null )
+            {
+                shot.transform.SetPositionAndRotation(shotSpawn, Quaternion.identity);
+                shot.transform.up = transform.up;
+                shot.SetActive(true);
+            }
             fireTimer = 0;
         }  
     }

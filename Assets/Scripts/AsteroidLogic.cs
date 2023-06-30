@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static StaticBullshit;
+using Random = UnityEngine.Random;
 
 public class AsteroidLogic : MonoBehaviour
 {
@@ -10,13 +12,13 @@ public class AsteroidLogic : MonoBehaviour
     public DirectorLogic dirLogic;
     Rigidbody2D rb;
     // Core values
-    public Vector2 direction;
     HealthLogic myHealth;
     public int budgetCost;
     public int healthMax;
     // Movement related
-    public float speed;
-    public float angle;
+    [NonSerialized] public Vector2 dir;
+    [NonSerialized] public float speed;
+    [NonSerialized] public float angle;
     private Vector2 directionOld;
     // Explosion code, currently disabled
     public float deathRadius;
@@ -32,9 +34,6 @@ public class AsteroidLogic : MonoBehaviour
 
         rb = GetComponent<Rigidbody2D>();
 
-        // No physics for now. Just triggers.
-        GetComponent<Collider2D>().isTrigger = true;
-
         // Attach to health script, and tell it how beeg boi I am
         myHealth = GetComponent<HealthLogic>();
         myHealth.hp = healthMax;
@@ -42,7 +41,7 @@ public class AsteroidLogic : MonoBehaviour
         // Set initial values in case nothing else gives me any orders.
         speed *= Random.Range(0.5f,2.5f);                   // Random speed
         rb.angularVelocity = Random.Range(-50,50);          // Random spin
-
+        dir = Random.insideUnitCircle.normalized;           // Random direction
     }
 
     private void Start()
@@ -59,31 +58,26 @@ public class AsteroidLogic : MonoBehaviour
         //float diry = Mathf.Cos(angle * Mathf.Deg2Rad) * speed;
         //direction = new Vector2(dirx, diry);
 
-        rb.velocity = direction.normalized * speed;
-        directionOld = direction;
+        rb.velocity = dir.normalized * speed;
+        directionOld = dir;
     }
 
-    void FixedUpdate()
+    private void Update()
     {
         // Check if outside sources tell me to move elsewhere
-        if (directionOld != direction)
+        if (directionOld != dir)
             UpdateMovement();
 
         // Check if it's time to die
-        if (myHealth.myCondition == HealthLogic.Condition.dying)
+        if (myHealth.myCondition == Condition.dying)
         {
             DeathRoll();
         }
     }
 
-    private void Update()
-    {
-        
-    }
-
     private void DeathRoll()
     {
-        myHealth.myCondition = HealthLogic.Condition.dead;
+        myHealth.myCondition = Condition.dead;
         //Explode();
         // *** I like the explosion code, but not on death
         Destroy(gameObject);
@@ -107,8 +101,7 @@ public class AsteroidLogic : MonoBehaviour
         Collider2D[] colliders = Physics2D.OverlapCircleAll(explosionPos, deathRadius);
         foreach (Collider2D hit in colliders)
         {
-            Rigidbody2D targetRB = hit.GetComponent<Rigidbody2D>();
-            if (targetRB != null)
+            if (hit.TryGetComponent<Rigidbody2D>(out var targetRB))
             {
                 float distance = Vector3.Distance(transform.position, hit.transform.position);
                 // Decrease strength based on distance to edge of radius

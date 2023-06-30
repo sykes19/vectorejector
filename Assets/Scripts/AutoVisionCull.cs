@@ -5,31 +5,24 @@ using static StaticBullshit;
 
 public class AutoVisionCull : MonoBehaviour
 {
-    bool seen;
-    float failsafeTimer;
-    // Start is called before the first frame update
+    public float offScreenLeniencyRatio;
+    Vector2 ob;
+    Vector2 pos;
+    Transform tf;
     void Awake()
     {
-
-    }
-    private void OnBecameInvisible()
-    {
-        if (seen)
-        {
-            Destroy(gameObject);
-        }
+        ob = fieldSize * offScreenLeniencyRatio;
+        tf = gameObject.transform;
     }
 
-    private void OnBecameVisible()
-    {
-        seen = true;
-    }
-    // Update is called once per frame
     void Update()
     {
-        // If spawned but never shown to camera, force the value after a time limit
-        failsafeTimer += Time.deltaTime;
-        if (failsafeTimer > neverSeenTimeLimit)
-            seen = true;
+        ob = fieldSize * offScreenLeniencyRatio;
+        // Am I out of bounds?
+        if (Mathf.Abs(tf.position.x) > ob.x || Mathf.Abs(tf.position.y) > ob.y)
+        {
+            //print("Cull activated");
+            gameObject.SetActive(false);
+        }
     }
 }

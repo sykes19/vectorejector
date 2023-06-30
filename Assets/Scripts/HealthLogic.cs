@@ -1,49 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static StaticBullshit;
 
 public class HealthLogic : MonoBehaviour
 {
     public int dBuffer;
     public int hp;
-    
-    // Your condition is whether or not you are alive or dead, or flagged for death cleanup.
-    public enum Condition
-    {
-        alive,
-        dying,
-        dead
-    };
 
+    // Your condition is whether or not you are alive or dead, or flagged for death cleanup.
     // Your state is whether you can take action or move around.
-    public enum State
-    {
-        free,
-        stunned,
-    }
+
+
     public Condition myCondition;
     public State myState;
 
-    void Awake()
+    void OnEnable()
     {
         myCondition = Condition.alive;
+    }
+    void OnDisable()
+    {
+        myCondition = Condition.dead;
     }
 
     void Update()
     {
-        
-    }
-
-    void FixedUpdate()
-    {
-        if (dBuffer > 0)
+        if (myCondition == Condition.alive)
         {
-            hp -= dBuffer;
-            dBuffer = 0;
-        }
-        if (hp <= 0)
-        {
-            myCondition = Condition.dying;
+            if (dBuffer > 0)
+            {
+                hp -= dBuffer;
+                dBuffer = 0;
+            }
+            if (hp <= 0)
+            {
+                myCondition = Condition.dying;
+            }
         }
     }
 }

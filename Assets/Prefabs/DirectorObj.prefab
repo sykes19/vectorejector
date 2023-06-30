@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4125292312854719459}
   - component: {fileID: 8755596184199704444}
+  - component: {fileID: -5054633655416791639}
   - component: {fileID: 4730793716048839680}
   m_Layer: 0
   m_Name: DirectorObj
@@ -45,16 +46,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 396c7c2b4015c464b88238b3cee4a903, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameForm: 0
   asteroidObj: {fileID: 5889006523965574343, guid: 1ced53be34c36d3438ae44a6c8a52c2f, type: 3}
   playerObj: {fileID: 6344401201593979898, guid: a6466910b5bd538488550351d75d01d2, type: 3}
   starObj: {fileID: 1114887095248687393, guid: ca88821f93563e14e9bf62f549938fde, type: 3}
+  enemyObj: {fileID: 1846261620101550794, guid: 8bc8d38bb79235b4e8168f06cda46ab1, type: 3}
   dirLogic: {fileID: 0}
   starCount: 0
-  bakedStars: 200
+  bakedStars: 250
   astInterval: 2
   starInterval: 0.2
   starIntervalAdjusted: 0
+--- !u!114 &-5054633655416791639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4125292312854719458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 347d415f4314e01459bd9eaee35d3322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pooledStars: []
+  starToPool: {fileID: 1114887095248687393, guid: ca88821f93563e14e9bf62f549938fde, type: 3}
+  howManyStars: 400
+  pooledEBullets: []
+  eBulletToPool: {fileID: 2291205288189166308, guid: 937df1f7d3f45124faf2e12e7c4346a6, type: 3}
+  howManyEBullets: 40
+  pooledPBullets: []
+  pBulletToPool: {fileID: 2291205288189166308, guid: 5e0cde891a15d054c99584cfc8e0020c, type: 3}
+  howManyPBullets: 20
 --- !u!114 &4730793716048839680
 MonoBehaviour:
   m_ObjectHideFlags: 0

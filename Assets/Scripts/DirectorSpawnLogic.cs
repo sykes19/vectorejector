@@ -7,13 +7,16 @@ using static StaticBullshit;
 public class DirectorSpawnLogic : MonoBehaviour
 {
     #region INIT
-    public Form gameForm;
+    public delegate void FormChange(Form newForm);
+    public static event FormChange OnFormChange;
+
     // Prefab references
     public GameObject asteroidObj;
     public GameObject playerObj;
+    GameObject player;
     public GameObject starObj;
+    public GameObject enemyObj;
     public DirectorLogic dirLogic;
-    PlayerLogic pLogic;
     // Spawning related
     Vector3 mouseLocation;
     Vector3 mousePosition;
@@ -21,6 +24,7 @@ public class DirectorSpawnLogic : MonoBehaviour
     Vector3 spawnV;
     public int starCount;
     public int bakedStars;
+    public float starSpeedMultiplier;
     Vector2 starSpawnLoc;
     // Currency related
     public float astInterval;
@@ -35,21 +39,22 @@ public class DirectorSpawnLogic : MonoBehaviour
     void Awake()
     {
         UpdateScreenSize();
-        gameForm = Form.arcade;
         // Failsafe spawn timer
         if (astInterval == 0)
             astInterval = 1;
         dirLogic = GetComponent<DirectorLogic>();
-
-
-
         SpawnPlayer();
+    }
+    private void Start()
+    {
+        // Give the initial delegated order to change form
+        SetForm(Form.arcade);
+
         // Spawn with a bunch of baked stars
         for (int i = 0; i < bakedStars; i++)
         {
             SpawnStar(true);
         }
-
     }
     void Update()
     {
@@ -58,7 +63,7 @@ public class DirectorSpawnLogic : MonoBehaviour
         // Asteroid spawn timer
         if (astTimer >= astInterval)
         {
-            SpawnAsteroid(40);
+            //SpawnAsteroid(40);
             astTimer -= astInterval;
         }
         // Star spawn timer
@@ -66,15 +71,6 @@ public class DirectorSpawnLogic : MonoBehaviour
         {
             SpawnStar(false);
             starTimer -= starIntervalAdjusted;
-        }
-
-        // If stars get wiped off the screen due to rendering error, replace them all
-        if (starCount < 100)
-        {
-            for (int i = starCount; i < bakedStars; i++)
-            {
-                SpawnStar(true);
-            }
         }
 
         astTimer += Time.deltaTime;
@@ -89,9 +85,14 @@ public class DirectorSpawnLogic : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F4))
         {
-
             // Spawn asteroid on mouse, for debug purposes
             Instantiate(asteroidObj, mousePosition, Quaternion.identity);
+        }
+        if (Input.GetKeyDown(KeyCode.F3))
+        {
+            // Spawn asteroid on mouse, for debug purposes
+            GameObject e = Instantiate(enemyObj, mousePosition, Quaternion.identity);
+            e.GetComponent<EnemyLogic>().playerTarget = player;
         }
 
         // Force form changes
@@ -115,12 +116,35 @@ public class DirectorSpawnLogic : MonoBehaviour
     }
     void SetForm(Form form)
     {
+        float aspectRatioMod = 1;
+        if (form == Form.arcade)
+        {
+            starSpeedMultiplier = 0.8f;
+            aspectRatioMod = (fieldSize.y / fieldSize.x);
+        }
+        else if (form == Form.open)
+        {
+            starSpeedMultiplier = 0.2f;
+            aspectRatioMod = (fieldSize.y / fieldSize.x);
+        }
+        else if (form == Form.side)
+        {
+            starSpeedMultiplier = 3f;
+            aspectRatioMod = 1;
+        }
+        else if (form == Form.classic)
+        {
+            starSpeedMultiplier = 1.5f;
+            aspectRatioMod = (fieldSize.y / fieldSize.x);
+        }
+        starIntervalAdjusted = (starInterval / starSpeedMultiplier) * aspectRatioMod;
         gameForm = form;
+        OnFormChange?.Invoke(gameForm);
     }
+
     void SpawnPlayer()
     {
-        GameObject player = Instantiate(playerObj, new Vector2(0,0), Quaternion.identity);
-        player.GetComponent<PlayerLogic>().spawnLogic = this;
+        player = Instantiate(playerObj, new Vector2(0,0), Quaternion.identity);
     }
 
     void SpawnStar(bool visible)
@@ -156,8 +180,17 @@ public class DirectorSpawnLogic : MonoBehaviour
                 starSpawnLoc = new Vector2(randX, fieldSize.y * buffer);
             }
         }
-        GameObject star = Instantiate(starObj, starSpawnLoc, Quaternion.identity);
-        star.GetComponent<StarLogic>().spawnLogic = this; // Here's my card...
+        //GameObject star = Instantiate(starObj, starSpawnLoc, Quaternion.identity);
+        // Spawn object from star pool;
+        GameObject star = ObjectPool.instance.GetPooledStars();
+        if (star != null)
+        {
+            star.transform.SetPositionAndRotation(starSpawnLoc, Quaternion.identity);
+            star.GetComponent<StarLogic>().spawnLogic = this; // Here's my card...
+            star.SetActive(true);
+        }
+        else
+            print("Holy shit, we're out of stars!!");
     }
     void SpawnAsteroid(int budgetLimit)
     {
@@ -183,7 +216,7 @@ public class DirectorSpawnLogic : MonoBehaviour
                 (Random.insideUnitCircle * circleSize);
             // Set asteroid direction toward chosen point in space
             Vector2 targetDir = centerScreen - ast.transform.position;
-            astLogic.direction = targetDir;
+            astLogic.dir = targetDir;
 
             //
             Debug.DrawLine(ast.transform.position, targetDir, Color.green, 1.5f);
