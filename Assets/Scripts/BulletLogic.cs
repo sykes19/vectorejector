@@ -7,6 +7,7 @@ public class BulletLogic : MonoBehaviour
 {
     Rigidbody2D rb;
     public int speed;
+    public float angleMod;
     public int damage;
     public bool friendly;
     string target;
@@ -41,10 +42,9 @@ public class BulletLogic : MonoBehaviour
             Vector2 hitSpeed = other.relativeVelocity;
             Vector2 hitLoc = other.GetContact(0).point;
 
-            HealthLogic otherhp = other.gameObject.GetComponent<HealthLogic>();
-            if (otherhp == null)
+            if (!other.gameObject.TryGetComponent<HealthLogic>(out var otherhp))
             {
-                print("Bullet can't find HealthLogic! Terminating!");
+                print("Bullet can't find target HealthLogic! Terminating!");
                 gameObject.SetActive(false);
             }
             else

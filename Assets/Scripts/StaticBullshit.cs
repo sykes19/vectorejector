@@ -21,10 +21,10 @@ public class StaticBullshit : MonoBehaviour
         alive,
         dying,
         dead
-    };
+    }
     public enum State
     {
         free,
-        stunned,
+        stunned
     }
 }

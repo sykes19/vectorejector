@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 2291205288189166308}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.16, y: 0.16, z: 0.16}
+  m_LocalScale: {x: 0.67, y: 0.67, z: 0.67}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1502213648277839147}
@@ -49,8 +49,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae911d83889336f43805d4330df2baaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 20
-  damage: 50
+  speed: 7
+  angleMod: 0
+  damage: 100
   friendly: 0
 --- !u!114 &-4226601374032941111
 MonoBehaviour:
@@ -65,8 +66,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offScreenLeniencyRatio: 1.1
-  ob: {x: 0, y: 0}
-  myAbsPos: {x: 0, y: 0}
 --- !u!50 &2246395050076529044
 Rigidbody2D:
   serializedVersion: 4
@@ -90,7 +89,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 1
+  m_Interpolate: 2
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0

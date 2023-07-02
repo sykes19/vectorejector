@@ -26,6 +26,8 @@ public class DirectorSpawnLogic : MonoBehaviour
     public int bakedStars;
     public float starSpeedMultiplier;
     Vector2 starSpawnLoc;
+    public float playerRespawnTimer;
+    bool playerAlive;
     // Currency related
     public float astInterval;
     float astTimer;
@@ -44,6 +46,14 @@ public class DirectorSpawnLogic : MonoBehaviour
             astInterval = 1;
         dirLogic = GetComponent<DirectorLogic>();
         SpawnPlayer();
+    }
+    private void OnEnable()
+    {
+        PlayerLogic.OnPlayerDeath += OnPlayerDeath;
+    }
+    private void OnDisable()
+    {
+        PlayerLogic.OnPlayerDeath -= OnPlayerDeath;
     }
     private void Start()
     {
@@ -75,7 +85,11 @@ public class DirectorSpawnLogic : MonoBehaviour
 
         astTimer += Time.deltaTime;
         starTimer += Time.deltaTime;
-
+        playerRespawnTimer = Time.deltaTime;
+        if (playerAlive && playerRespawnTimer < 0)
+        {
+            SpawnPlayer();
+        }
         #region DEBUG
         ///////// BEGIN DEBUG SHIT //////////////
         // Capture mouse location, and then convert that to the proper value based on the camera space
@@ -141,12 +155,11 @@ public class DirectorSpawnLogic : MonoBehaviour
         gameForm = form;
         OnFormChange?.Invoke(gameForm);
     }
-
     void SpawnPlayer()
     {
         player = Instantiate(playerObj, new Vector2(0,0), Quaternion.identity);
+        playerAlive = true;
     }
-
     void SpawnStar(bool visible)
     {
         /* This method spawns a star either visibly in a random spot on the screen, or
@@ -226,5 +239,10 @@ public class DirectorSpawnLogic : MonoBehaviour
             // Some asteroids might have unique values; this is future proofing
             i -= astLogic.budgetCost;
         }
+    }
+    void OnPlayerDeath()
+    {
+        playerAlive = false;
+        playerRespawnTimer = 1f;
     }
 }

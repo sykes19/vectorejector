@@ -483,13 +483,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTarget: {fileID: 0}
   bullet: {fileID: 2291205288189166308, guid: 937df1f7d3f45124faf2e12e7c4346a6, type: 3}
-  dir: {x: 0, y: 0, z: 0}
-  aimDir: {x: 0, y: 0, z: 0}
   budgetCost: 100
-  healthMax: 250
+  healthMax: 150
+  burstAmmo: 6
   speed: 0
+  reloadSpeed: 2
+  burstDelay: 0.2
   angle: 0
-  rotSpeed: 10
+  rotSpeed: 40
 --- !u!50 &9072565681487823992
 Rigidbody2D:
   serializedVersion: 4

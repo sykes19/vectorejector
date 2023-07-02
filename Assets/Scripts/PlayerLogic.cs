@@ -8,6 +8,8 @@ using Random = UnityEngine.Random;
 public class PlayerLogic : MonoBehaviour
 {
     #region INIT
+    public delegate void PlayerDeath();
+    public static event PlayerDeath OnPlayerDeath;
     // Component references
     Rigidbody2D rb;
     HealthLogic myHealth;
@@ -15,7 +17,7 @@ public class PlayerLogic : MonoBehaviour
     public GameObject leftWing;
     public GameObject rightWing;
     // Core values
-    [NonSerialized] public Vector3 aimAngle;
+    public Vector3 aimAngle;
     [NonSerialized] public float aimDistance;
     public int healthMax;
     float horizontal;
@@ -83,7 +85,7 @@ public class PlayerLogic : MonoBehaviour
         // Mandatory visual and input updates
         FormUpdate(myForm);
         fireTimer += Time.deltaTime;
-        transform.up = aimAngle;
+
         if (Input.GetMouseButton(0))
             FireWeapon();
 
@@ -93,6 +95,13 @@ public class PlayerLogic : MonoBehaviour
         Vector2 dir = new(horizontal, vertical);
         dir.Normalize();
         transform.position += ((60 * Time.deltaTime) * (speed / 10)) * new Vector3(dir.x, dir.y, 0); // Magic number for precision? :x
+
+        if (myHealth.myCondition == Condition.dying)
+        {
+            // Announce I've died
+            OnPlayerDeath?.Invoke();
+            Destroy(gameObject);
+        }
     }
     void FixedUpdate()
     {
@@ -201,7 +210,14 @@ public class PlayerLogic : MonoBehaviour
 
         // Restrict or allow aiming based on form, and do form-specific bullshit
         if (myForm == Form.open || myForm == Form.arcade)
-            AimShip();
+        {
+            // Find location of mouse.
+            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 myPosition = new(gameObject.transform.position.x, gameObject.transform.position.y);
+            aimAngle = mousePosition - myPosition;
+            // Write down the distance in case we need it
+            aimDistance = Vector2.Distance(myPosition, mousePosition);
+        }
         else if (myForm == Form.classic)
             aimAngle = new Vector2(0, 1);
         else if (myForm == Form.side)
@@ -226,19 +242,11 @@ public class PlayerLogic : MonoBehaviour
                 Rt.localPosition = Vector3.Lerp(Rt.localPosition, rightWingTargetPos, Time.deltaTime * tiltSpeed);
             }
         }
+        // Rotation code, it needs to take an adjusted aimAngle from FormUpdate
+        float angle = (Mathf.Atan2(aimAngle.y, aimAngle.x) * Mathf.Rad2Deg) - 90;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
-    void AimShip()
-    {
-        // Find location of mouse.
-        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 myPosition = new(gameObject.transform.position.x, gameObject.transform.position.y);
-        aimAngle = new Vector3(
-            mousePosition.x - myPosition.x,
-            mousePosition.y - myPosition.y
-        );
-        // Write down the distance in case we need it
-        aimDistance = Vector2.Distance(myPosition, mousePosition);
-    }
+
     void FireWeapon()
     {
         // Can I fire yet?
