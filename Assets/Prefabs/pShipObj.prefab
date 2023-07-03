@@ -982,12 +982,10 @@ MonoBehaviour:
   leftWing: {fileID: 6850616197356685455}
   rightWing: {fileID: 7051539992856699265}
   aimAngle: {x: 0, y: 0, z: 0}
-  aimDistance: 0
-  budgetCost: 0
   healthMax: 100
-  speed: 1.7
+  speed: 1.5
   fireDelay: 0.09
-  formChangeDuration: 0.5
+  formChangeDuration: 0.6
 --- !u!50 &1198321152063082382
 Rigidbody2D:
   serializedVersion: 4
@@ -1049,7 +1047,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.29
+  m_Radius: 0.38
 --- !u!212 &6356883572626610537
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -85,8 +85,8 @@ public class DirectorSpawnLogic : MonoBehaviour
 
         astTimer += Time.deltaTime;
         starTimer += Time.deltaTime;
-        playerRespawnTimer = Time.deltaTime;
-        if (playerAlive && playerRespawnTimer < 0)
+        playerRespawnTimer -= Time.deltaTime;
+        if (!playerAlive && playerRespawnTimer < 0)
         {
             SpawnPlayer();
         }

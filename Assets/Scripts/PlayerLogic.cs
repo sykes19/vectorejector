@@ -28,9 +28,8 @@ public class PlayerLogic : MonoBehaviour
     Vector3 forwardVector;
     #endregion
     #region Ship Form Init
-    Form myForm;
     // Ship transformation values
-    public float formChangeDuration = 0.7f;
+    public float formChangeDuration;
     private float formChangeTimer;
     private Vector3 leftWingStartScale;
     private Vector3 rightWingStartScale;
@@ -53,12 +52,17 @@ public class PlayerLogic : MonoBehaviour
     private float maxTilt = 0.4f;
     private float tiltSpeed = 10f;
     private bool isTransforming;
+    private Vector3 defaultScale;
+    private Transform shipTf;
     Transform Lt;
     Transform Rt;
     #endregion
 
     void Awake()
-    {
+    {   
+        defaultScale = gameObject.transform.localScale;
+        shipTf = gameObject.transform;
+        shipTf.localScale = Vector3.zero;
         Lt = leftWing.transform;
         Rt = rightWing.transform;
         rb = GetComponent<Rigidbody2D>();
@@ -67,7 +71,9 @@ public class PlayerLogic : MonoBehaviour
     // Subscribe to the form change event
     private void OnEnable()
     {
+        OnFormChange(gameForm);
         myHealth.hp = healthMax;
+        myHealth.myCondition = Condition.alive;
         DirectorSpawnLogic.OnFormChange += OnFormChange;
     }
     private void OnDisable()
@@ -77,13 +83,25 @@ public class PlayerLogic : MonoBehaviour
 
     private void Start()
     {
-        myForm = gameForm;
+        
     }
 
     void Update()
     {
+        // Expand ship until it's desired size
+        if(shipTf.localScale.magnitude < defaultScale.magnitude)
+            shipTf.localScale += (defaultScale / 10) * (Time.deltaTime * 60);
+        else if (shipTf.localScale.magnitude != defaultScale.magnitude)
+            shipTf.localScale = defaultScale;
+
+        if (myHealth.myCondition == Condition.dying)
+        {
+            // Announce I've died
+            OnPlayerDeath?.Invoke();
+            Destroy(gameObject);
+        }
         // Mandatory visual and input updates
-        FormUpdate(myForm);
+        FormUpdate(gameForm);
         fireTimer += Time.deltaTime;
 
         if (Input.GetMouseButton(0))
@@ -95,13 +113,6 @@ public class PlayerLogic : MonoBehaviour
         Vector2 dir = new(horizontal, vertical);
         dir.Normalize();
         transform.position += ((60 * Time.deltaTime) * (speed / 10)) * new Vector3(dir.x, dir.y, 0); // Magic number for precision? :x
-
-        if (myHealth.myCondition == Condition.dying)
-        {
-            // Announce I've died
-            OnPlayerDeath?.Invoke();
-            Destroy(gameObject);
-        }
     }
     void FixedUpdate()
     {
@@ -111,7 +122,6 @@ public class PlayerLogic : MonoBehaviour
     // This is a one-time order to make all necessary adjustments to change forms
     void OnFormChange(Form form)
     {
-        myForm = form;
         Lrot = 0f;  // Zero this shit out to start fresh
         Rrot = 0f;
         Lpos = Vector3.zero;
@@ -130,7 +140,6 @@ public class PlayerLogic : MonoBehaviour
                     Rpos = new Vector3(1f, -0.5f, 0);
                     Rrot = 189f;
                     Rscl = Vector3.one;
-                    myForm = Form.open;
                     break;
                 }
             case Form.side:
@@ -141,7 +150,6 @@ public class PlayerLogic : MonoBehaviour
                     Rpos = new Vector3(0, 0, 0);
                     Rrot = 0;
                     Rscl = new Vector3(0.6f, 1, 1);
-                    myForm = Form.side;
                     break;
                 }
             case Form.classic:
@@ -152,7 +160,6 @@ public class PlayerLogic : MonoBehaviour
                     Rpos = new Vector3(1f, 0, 0);
                     Rrot = 12.45f;
                     Rscl = Vector3.one;
-                    myForm = Form.classic;
                     break;
                 }
             case Form.arcade:
@@ -163,7 +170,6 @@ public class PlayerLogic : MonoBehaviour
                     Rpos = new Vector3(1f, 0, 0);
                     Rrot = 12.45f;
                     Rscl = Vector3.one;
-                    myForm = Form.arcade;
                     break;
                 }
         }

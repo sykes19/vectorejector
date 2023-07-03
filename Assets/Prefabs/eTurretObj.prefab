@@ -486,9 +486,12 @@ MonoBehaviour:
   budgetCost: 100
   healthMax: 150
   burstAmmo: 6
+  myAmmo: 0
   speed: 0
   reloadSpeed: 2
+  reloadTimer: 0
   burstDelay: 0.2
+  burstDuration: 1
   angle: 0
   rotSpeed: 40
 --- !u!50 &9072565681487823992

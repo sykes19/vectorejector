@@ -53,6 +53,8 @@ MonoBehaviour:
   dirLogic: {fileID: 0}
   starCount: 0
   bakedStars: 250
+  starSpeedMultiplier: 0
+  playerRespawnTimer: 0
   astInterval: 2
   starInterval: 0.2
   starIntervalAdjusted: 0
@@ -73,10 +75,10 @@ MonoBehaviour:
   howManyStars: 400
   pooledEBullets: []
   eBulletToPool: {fileID: 2291205288189166308, guid: 937df1f7d3f45124faf2e12e7c4346a6, type: 3}
-  howManyEBullets: 40
+  howManyEBullets: 200
   pooledPBullets: []
   pBulletToPool: {fileID: 2291205288189166308, guid: 5e0cde891a15d054c99584cfc8e0020c, type: 3}
-  howManyPBullets: 20
+  howManyPBullets: 40
 --- !u!114 &4730793716048839680
 MonoBehaviour:
   m_ObjectHideFlags: 0

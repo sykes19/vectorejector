@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Search;
 using UnityEngine;
 using static StaticBullshit;
 using Random = UnityEngine.Random;
@@ -18,10 +19,10 @@ public class EnemyLogic : MonoBehaviour
     public int budgetCost;
     public int healthMax;
     public int burstAmmo;
-    int myAmmo;
+    public int myAmmo;
     public float speed;
     public float reloadSpeed;
-    float reloadTimer;
+    public float reloadTimer;
     public float burstDelay;
     public float burstDuration;
     public float angle;
@@ -49,7 +50,8 @@ public class EnemyLogic : MonoBehaviour
         rotSpeed *= rotDir;
         myHealth.hp = healthMax;
         myAmmo = burstAmmo;
-        burstDelay = burstAmmo / burstDuration;
+        burstDelay = burstDuration / burstAmmo;
+        myForm = gameForm;
         FormUpdate(gameForm);
         DirectorSpawnLogic.OnFormChange += OnFormChange;
     }
@@ -59,7 +61,7 @@ public class EnemyLogic : MonoBehaviour
     }
     void Start()
     {
-        myForm = gameForm;
+        
     }
 
     // Update is called once per frame
@@ -68,7 +70,6 @@ public class EnemyLogic : MonoBehaviour
         //burstAmmo - How many times to fire per burst
         //myAmmo - The amount of ammo left in the burst
         //burstDelay - Delay between shots in a burst
-        //burstTimer - Timer to count burst delay
         //reloadSpeed - How long to refill ammo
         //reloadTimer - Timer to count reload speed
 
@@ -106,8 +107,13 @@ public class EnemyLogic : MonoBehaviour
             Quaternion addRot = Quaternion.Euler(0f, 0f, angle);
             Quaternion finalRot = Quaternion.identity * addRot;
             GameObject shot = ObjectPool.instance.GetPooledEBullets();
+            if (shot != null)
+            {
             shot.transform.SetPositionAndRotation(gameObject.transform.position, finalRot);
             shot.SetActive(true);
+            }
+            else
+                print("Holy fuck, we're out of enemy bullets!!!");
         }
     }
     void FormUpdate(Form form)
