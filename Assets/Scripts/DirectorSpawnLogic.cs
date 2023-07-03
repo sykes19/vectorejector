@@ -7,8 +7,6 @@ using static StaticBullshit;
 public class DirectorSpawnLogic : MonoBehaviour
 {
     #region INIT
-    public delegate void FormChange(Form newForm);
-    public static event FormChange OnFormChange;
 
     // Prefab references
     public GameObject asteroidObj;
@@ -40,7 +38,6 @@ public class DirectorSpawnLogic : MonoBehaviour
 
     void Awake()
     {
-        UpdateScreenSize();
         // Failsafe spawn timer
         if (astInterval == 0)
             astInterval = 1;
@@ -49,17 +46,16 @@ public class DirectorSpawnLogic : MonoBehaviour
     }
     private void OnEnable()
     {
+        DirectorLogic.OnFormChange += OnFormChange;
         PlayerLogic.OnPlayerDeath += OnPlayerDeath;
     }
     private void OnDisable()
     {
+        DirectorLogic.OnFormChange -= OnFormChange;
         PlayerLogic.OnPlayerDeath -= OnPlayerDeath;
     }
     private void Start()
     {
-        // Give the initial delegated order to change form
-        SetForm(Form.arcade);
-
         // Spawn with a bunch of baked stars
         for (int i = 0; i < bakedStars; i++)
         {
@@ -68,8 +64,7 @@ public class DirectorSpawnLogic : MonoBehaviour
     }
     void Update()
     {
-        // Update global variables for screen size
-        UpdateScreenSize();
+
         // Asteroid spawn timer
         if (astTimer >= astInterval)
         {
@@ -108,27 +103,11 @@ public class DirectorSpawnLogic : MonoBehaviour
             GameObject e = Instantiate(enemyObj, mousePosition, Quaternion.identity);
             e.GetComponent<EnemyLogic>().playerTarget = player;
         }
-
-        // Force form changes
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            SetForm(Form.arcade);
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-            SetForm(Form.classic);
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-            SetForm(Form.open);
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-            SetForm(Form.side);
         ////////// END DEBUG SHIT ////////////
         #endregion 
     }
-    void UpdateScreenSize()
-    {
-        // Detect screen size and bind them to global variables
-        float screenAspect = (float)Screen.width / (float)Screen.height;
-        fieldSize.y = Camera.main.orthographicSize;
-        fieldSize.x = fieldSize.y * screenAspect;
-    }
-    void SetForm(Form form)
+
+    void OnFormChange(Form form)
     {
         float aspectRatioMod = 1;
         if (form == Form.arcade)
@@ -152,8 +131,6 @@ public class DirectorSpawnLogic : MonoBehaviour
             aspectRatioMod = (fieldSize.y / fieldSize.x);
         }
         starIntervalAdjusted = (starInterval / starSpeedMultiplier) * aspectRatioMod;
-        gameForm = form;
-        OnFormChange?.Invoke(gameForm);
     }
     void SpawnPlayer()
     {

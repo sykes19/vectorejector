@@ -25,12 +25,12 @@ public class StarLogic : MonoBehaviour
     }
     private void OnEnable()
     {
-        DirectorSpawnLogic.OnFormChange += FormUpdate;;
+        DirectorLogic.OnFormChange += FormUpdate;;
         FormUpdate(gameForm);
     }
     private void OnDisable()
     {
-        DirectorSpawnLogic.OnFormChange -= FormUpdate;
+        DirectorLogic.OnFormChange -= FormUpdate;
 
     }
 

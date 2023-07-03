@@ -74,11 +74,11 @@ public class PlayerLogic : MonoBehaviour
         OnFormChange(gameForm);
         myHealth.hp = healthMax;
         myHealth.myCondition = Condition.alive;
-        DirectorSpawnLogic.OnFormChange += OnFormChange;
+        DirectorLogic.OnFormChange += OnFormChange;
     }
     private void OnDisable()
     {
-        DirectorSpawnLogic.OnFormChange -= OnFormChange;   
+        DirectorLogic.OnFormChange -= OnFormChange;   
     }
 
     private void Start()

@@ -53,11 +53,11 @@ public class EnemyLogic : MonoBehaviour
         burstDelay = burstDuration / burstAmmo;
         myForm = gameForm;
         FormUpdate(gameForm);
-        DirectorSpawnLogic.OnFormChange += OnFormChange;
+        DirectorLogic.OnFormChange += OnFormChange;
     }
     private void OnDisable()
     {
-        DirectorSpawnLogic.OnFormChange -= OnFormChange;
+        DirectorLogic.OnFormChange -= OnFormChange;
     }
     void Start()
     {
