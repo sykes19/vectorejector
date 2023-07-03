@@ -37,6 +37,7 @@ public class DirectorLogic : MonoBehaviour
     public int boredom;
     public int excitement;
     public int stress;
+    // Test
 
 
     #endregion
