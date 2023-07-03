@@ -17,15 +17,14 @@ public class PlayerLogic : MonoBehaviour
     public GameObject leftWing;
     public GameObject rightWing;
     // Core values
-    public Vector3 aimAngle;
+    public float speed;
     [NonSerialized] public float aimDistance;
     public int healthMax;
     float horizontal;
     float vertical;
-    public float speed;
     float fireTimer;
     public float fireDelay;
-    Vector3 forwardVector;
+    Vector3 aimAngle;
     #endregion
     #region Ship Form Init
     // Ship transformation values
@@ -52,17 +51,13 @@ public class PlayerLogic : MonoBehaviour
     private float maxTilt = 0.4f;
     private float tiltSpeed = 10f;
     private bool isTransforming;
-    private Vector3 defaultScale;
-    private Transform shipTf;
     Transform Lt;
     Transform Rt;
     #endregion
 
     void Awake()
     {   
-        defaultScale = gameObject.transform.localScale;
-        shipTf = gameObject.transform;
-        shipTf.localScale = Vector3.zero;
+
         Lt = leftWing.transform;
         Rt = rightWing.transform;
         rb = GetComponent<Rigidbody2D>();
@@ -88,11 +83,7 @@ public class PlayerLogic : MonoBehaviour
 
     void Update()
     {
-        // Expand ship until it's desired size
-        if(shipTf.localScale.magnitude < defaultScale.magnitude)
-            shipTf.localScale += (defaultScale / 10) * (Time.deltaTime * 60);
-        else if (shipTf.localScale.magnitude != defaultScale.magnitude)
-            shipTf.localScale = defaultScale;
+
 
         if (myHealth.myCondition == Condition.dying)
         {
@@ -259,9 +250,9 @@ public class PlayerLogic : MonoBehaviour
         if (fireTimer >= fireDelay)
         {
             // Offset the shot in front of me a lil bit
-            float distance = 0.6f;
-            forwardVector = transform.up;
-            Vector3 offset = forwardVector * distance;
+            float distance = gameObject.transform.localScale.x * 1.3f;
+            //float distance = 0.6f;
+            Vector3 offset = aimAngle.normalized * distance;
             Vector3 shotSpawn = transform.position + offset;
             GameObject shot = ObjectPool.instance.GetPooledPBullets();
             if (shot != null )

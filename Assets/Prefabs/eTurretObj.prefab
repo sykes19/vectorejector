@@ -425,6 +425,7 @@ GameObject:
   - component: {fileID: 1269580048215094577}
   - component: {fileID: 9072565681487823992}
   - component: {fileID: 5926654256216877344}
+  - component: {fileID: 1117809656111810725}
   m_Layer: 0
   m_Name: eTurretObj
   m_TagString: Enemy
@@ -491,7 +492,7 @@ MonoBehaviour:
   reloadSpeed: 2
   reloadTimer: 0
   burstDelay: 0.2
-  burstDuration: 1
+  burstDuration: 2
   angle: 0
   rotSpeed: 40
 --- !u!50 &9072565681487823992
@@ -582,6 +583,19 @@ PolygonCollider2D:
       - {x: 0.49949074, y: -0.20836855}
       - {x: 0.70998985, y: 0.00036292523}
   m_UseDelaunayMesh: 0
+--- !u!114 &1117809656111810725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1846261620101550794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf371c33f5c47b043b33aa4dede9e1de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  expansionSpeed: 1
 --- !u!1 &3131049703504518261
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,12 +13,32 @@ public class DirectorLogic : MonoBehaviour
     int budgetAllowance;            // How much 
     int budgetBonus;                // Extra currency for spawning
     bool spawnCooldown;             // Pause difficulty climb during opening act
+    [Tooltip("Target for how much threat should be in play")]
+    public int threatPar;
     [Tooltip("Target par to ramp up to during opening act")]
     public int parTargetBase;
     [Tooltip("How long to wait before increasing par toward its goal")]
     public int parIncreaseDelay;
     [Tooltip("Amount to increase initial par toward goal")]
     public int parIncreaseAmount;
+    [Tooltip("How often to roll a dice on whether to spawn a wave")]
+    public int waveInterval;
+    [Tooltip("Seconds until difficulty increases")]
+    public int baseDifficultyCrawl;
+    [Tooltip("Time until boredom currency increases")]
+    public int baseBoredomCrawl;
+    public int boredomCrawl;
+    public int difficultyCrawl;
+    public int threatEnemy;
+    public int threatPlayer;
+    public int threatTotal;
+    public int difficulty = 1;
+    public int budget;
+    public int boredom;
+    public int excitement;
+    public int stress;
+
+
     #endregion
     private void Awake()
     {

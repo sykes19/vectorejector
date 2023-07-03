@@ -27,7 +27,6 @@ public class EnemyLogic : MonoBehaviour
     public float burstDuration;
     public float angle;
     public float rotSpeed;
-    int rotDir;
     Form myForm;
     Stance stance;
     enum Stance
@@ -91,7 +90,7 @@ public class EnemyLogic : MonoBehaviour
         transform.Rotate(rotSpeed * Time.deltaTime * Vector3.forward);
         if(myHealth.myCondition == Condition.dying)
         {
-            Destroy(gameObject);
+            DeathRoll();
         }
     }
     void FireShots(int amount)
