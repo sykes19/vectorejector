@@ -8,7 +8,6 @@ public class StaticBullshit : MonoBehaviour
     public static Vector2 fieldSize;
     public static Form gameForm;
 
-
     public enum Form
     {
         open,

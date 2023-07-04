@@ -6,6 +6,9 @@ public class ObjectPool : MonoBehaviour
 { 
     public static ObjectPool instance;
     // Create definitions for object pools
+    public List<GameObject> pooledRocks;
+    public GameObject rockToPool;
+    public int howManyRocks;
     public List<GameObject> pooledStars;
     public GameObject starToPool;
     public int howManyStars;
@@ -26,6 +29,7 @@ public class ObjectPool : MonoBehaviour
         pooledStars = new List<GameObject>();
         pooledEBullets = new List<GameObject>();
         pooledPBullets = new List<GameObject>();
+        pooledRocks = new List<GameObject>();
         GameObject tmp;
 
         // Instantiate and populate lists with object instances
@@ -46,6 +50,12 @@ public class ObjectPool : MonoBehaviour
             tmp = Instantiate(eBulletToPool);
             tmp.SetActive(false);
             pooledEBullets.Add(tmp);
+        }
+        for (int i = 0; i < howManyRocks; i++)
+        {
+            tmp = Instantiate(rockToPool);
+            tmp.SetActive(false);
+            pooledRocks.Add(tmp);
         }
     }
     public GameObject GetPooledStars()
@@ -77,6 +87,17 @@ public class ObjectPool : MonoBehaviour
             if (!pooledEBullets[i].activeInHierarchy)
             {
                 return pooledEBullets[i];
+            }
+        }
+        return null;
+    }
+    public GameObject GetPooledRocks()
+    {
+        for (int i = 0; i < howManyRocks; i++)
+        {
+            if (!pooledRocks[i].activeInHierarchy)
+            {
+                return pooledRocks[i];
             }
         }
         return null;

@@ -10,22 +10,22 @@ public class DirectorSpawnLogic : MonoBehaviour
     // Prefab references
     public GameObject asteroidObj;
     public GameObject playerObj;
-    GameObject player;
     public GameObject starObj;
     public GameObject enemyObj;
     public DirectorLogic dirLogic;
     // Spawning related
+    GameObject player;
     Vector3 mouseLocation;
     Vector3 mousePosition;
     Vector3 spawnH;
     Vector3 spawnV;
+    Vector2 starSpawnLoc;
     public int starCount;
     public int bakedStars;
     public float starSpeedMultiplier;
-    Vector2 starSpawnLoc;
     public float playerRespawnTimer;
     bool playerAlive;
-    // Currency related
+    // Timer related
     public float astInterval;
     float astTimer;
     public float starInterval;
@@ -196,7 +196,6 @@ public class DirectorSpawnLogic : MonoBehaviour
             // Spawn asteroid in random spawn position, and pass my ID
             GameObject ast = Instantiate(asteroidObj, spawnLocs[Random.Range(0,spawnLocs.Length)], Quaternion.identity);
             AsteroidLogic astLogic = ast.GetComponent<AsteroidLogic>();
-            astLogic.dirLogic = dirLogic;
 
             // Find random point in a circle in the center of screen
             int circleSize = 10;

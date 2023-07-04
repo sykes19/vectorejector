@@ -9,15 +9,21 @@ public class AsteroidLogic : MonoBehaviour
 {
     #region INIT
     // Component references
-    public DirectorLogic dirLogic;
     Rigidbody2D rb;
-    // Core values
     HealthLogic myHealth;
+    PolygonCollider2D col;
+    SpriteRenderer rend;
+    public Sprite triangle;
+    public Sprite square;
+    public Sprite hex;
+    // Core values
+    public int size;
     public int budgetCost;
     public int healthMax;
+    Vector3 baseScale;
     // Movement related
     [NonSerialized] public Vector2 dir;
-    [NonSerialized] public float speed;
+    public float speed;
     [NonSerialized] public float angle;
     private Vector2 directionOld;
     // Explosion code, currently disabled
@@ -28,39 +34,33 @@ public class AsteroidLogic : MonoBehaviour
 
     void Awake()
     {
-        // Sanity check to prevent infinite loops
-        if (budgetCost == 0)
-            budgetCost = 20;
-
+        col = GetComponent<PolygonCollider2D>();
         rb = GetComponent<Rigidbody2D>();
-
-        // Attach to health script, and tell it how beeg boi I am
+        rend = GetComponent<SpriteRenderer>();
         myHealth = GetComponent<HealthLogic>();
-        myHealth.hp = healthMax;
 
-        // Set initial values in case nothing else gives me any orders.
-        speed *= Random.Range(0.5f,2.5f);                   // Random speed
-        rb.angularVelocity = Random.Range(-50,50);          // Random spin
-        dir = Random.insideUnitCircle.normalized;           // Random direction
+        baseScale = gameObject.transform.localScale;
     }
-
+    private void OnEnable()
+    {
+        SetShape();
+        DirectorLogic.Instance.threatEnemy += budgetCost;
+        // Set initial values in case nothing else gives me any orders.
+        speed = (speed / 10) * Random.Range(0.5f, 2.5f);                   // Random speed
+        rb.angularVelocity = Random.Range(-100, 100);          // Random spin
+        dir = Random.insideUnitCircle.normalized;            // Random direction
+    }
+    private void OnDisable()
+    {
+        DirectorLogic.Instance.threatEnemy -= budgetCost;
+    }
     private void Start()
     {
         UpdateMovement();
     }
 
     // Method to reset movement if needed
-    private void UpdateMovement()
-    {
-        // This code was for polar -> cartesian conversion, but I removed the polar parts
-        // For now...
-        //float dirx = Mathf.Sin(angle * Mathf.Deg2Rad) * speed;
-        //float diry = Mathf.Cos(angle * Mathf.Deg2Rad) * speed;
-        //direction = new Vector2(dirx, diry);
 
-        rb.velocity = dir.normalized * speed;
-        directionOld = dir;
-    }
 
     private void Update()
     {
@@ -74,22 +74,55 @@ public class AsteroidLogic : MonoBehaviour
             DeathRoll();
         }
     }
-
+    private void UpdateMovement()
+    {
+        rb.velocity = dir.normalized * speed;
+        directionOld = dir;
+    }
     private void DeathRoll()
     {
         myHealth.myCondition = Condition.dead;
         //Explode();
         // *** I like the explosion code, but not on death
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
-    private void OnDestroy()
+    void SetShape()
     {
-        // On death, subtract my budget value from on-screen budget
-        
-        // THIS CANNOT STAY, IT MUST BE FIXED. FINISH DirectorLogic PLEASE
+        // Assign changes based on what size asteroid is being spawned
+        float sizeMultiplier = 1;
+        int choice = Random.Range(1, 4);
+        if (choice == 1)
+        {
+            sizeMultiplier = 1f;
+            rend.sprite = square;
+        }
+        if (choice == 2)
+        {
+            sizeMultiplier = 0.5f;
+            rend.sprite = triangle;
+        }
+        if (choice == 3)
+        {
+            sizeMultiplier = 2f;
+            rend.sprite = hex;
+        }
 
-        //dirLogic.budget -= budgetValue;
+        // Apply health and scale multipliers
+        gameObject.transform.localScale = baseScale * sizeMultiplier;
+        myHealth.hp = Mathf.RoundToInt(healthMax * sizeMultiplier);
+
+        // Reset and re-apply the collider to match the new sprite
+        col.pathCount = 0;
+        col.pathCount = rend.sprite.GetPhysicsShapeCount();
+        
+        List<Vector2> path = new();
+        for (int i = 0; i < col.pathCount; i++)
+        {
+            path.Clear();
+            rend.sprite.GetPhysicsShape(i, path);
+            col.SetPath(i, path.ToArray());
+        }
     }
 
     private void Explode()
@@ -118,7 +151,6 @@ public class AsteroidLogic : MonoBehaviour
                 // Add force to target based on normalized vector * strength
                 targetRB.AddForce(targetPush, ForceMode2D.Impulse);
             }
-
         }
     }
 }

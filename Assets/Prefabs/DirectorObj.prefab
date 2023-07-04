@@ -70,6 +70,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 347d415f4314e01459bd9eaee35d3322, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pooledRocks: []
+  rockToPool: {fileID: 5889006523965574343, guid: 1ced53be34c36d3438ae44a6c8a52c2f, type: 3}
+  howManyRocks: 50
   pooledStars: []
   starToPool: {fileID: 1114887095248687393, guid: ca88821f93563e14e9bf62f549938fde, type: 3}
   howManyStars: 400
@@ -91,6 +94,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e5fee334e298824d996ba16595110c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  threatPar: 200
   parTargetBase: 500
-  parIncreaseDelay: 120
+  parIncreaseDelay: 2
   parIncreaseAmount: 25
+  waveInterval: 0.5
+  difficultyCrawl: 15
+  boredomCrawl: 1
+  threatEnemy: 0
+  threatPlayer: 0
+  threatTotal: 0
+  difficulty: 1
+  budget: 0
+  boredom: 0
+  excitement: 0
+  stress: 0
+  perSecond: 0

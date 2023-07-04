@@ -78,9 +78,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d25dc7543ae0c4d8991dec9dc4bbe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dirLogic: {fileID: 0}
-  budgetCost: 0
+  triangle: {fileID: 7482667652216324306, guid: ce66f619631ac9c4c87a8948d5c2b149, type: 3}
+  square: {fileID: 7482667652216324306, guid: a6f3c7a3199cc1e439e0f76cfd4d9b59, type: 3}
+  hex: {fileID: 2747690628134850419, guid: 2c8aca36404d5d749a6845218d72a86a, type: 3}
+  size: 0
+  budgetCost: 3
   healthMax: 30
+  speed: 5
   deathRadius: 5
   deathStrength: 10
 --- !u!212 &5889006523965574342
@@ -124,7 +128,7 @@ SpriteRenderer:
   m_SortingLayerID: 1220855309
   m_SortingLayer: 1
   m_SortingOrder: -100
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: ce66f619631ac9c4c87a8948d5c2b149, type: 3}
   m_Color: {r: 0.04172325, g: 0, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -197,7 +201,7 @@ PolygonCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0.28866667}
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -206,8 +210,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.5, y: 0.5}
-      - {x: -0.5, y: -0.5}
-      - {x: 0.5, y: -0.5}
-      - {x: 0.5, y: 0.5}
+    - - {x: -0.25, y: 0.43359375}
+      - {x: -0.5, y: 0}
+      - {x: -0.25, y: -0.43359375}
+      - {x: 0.25, y: -0.43359375}
+      - {x: 0.5, y: 0}
+      - {x: 0.25, y: 0.43359375}
   m_UseDelaunayMesh: 0
