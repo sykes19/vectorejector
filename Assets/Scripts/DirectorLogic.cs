@@ -22,10 +22,12 @@ public class DirectorLogic : MonoBehaviour
     public float parIncreaseDelay;
     [Tooltip("Amount to increase initial par toward goal")]
     public float parIncreaseAmount;
-    [Tooltip("How often to roll a dice on whether to spawn a wave")]
+    [Tooltip("How many seconds to wait to decide on whether to spawn a wave")]
     public float waveInterval;
-    [Tooltip("Seconds before difficulty increases")]
+    [Tooltip("Seconds before difficulty increases at normal stress levels")]
     public float difficultyCrawl;
+    [Tooltip("Amount to increment difficulty every increment")]
+    public float difficultyIncreaseAmount;
     [Tooltip("Time until boredom currency increases")]
     public float boredomCrawl;
     public int threatEnemy;
@@ -38,6 +40,7 @@ public class DirectorLogic : MonoBehaviour
     public float stress;
     public float perSecond;
 
+    float waveTimer;
     int budgetAllowance;            // How much I can spend to spawn this wave
     int budgetBonus;                // Extra currency for spawning
     bool pauseTimers;               // Disable difficulty scaling during gameplay (for spawn, form change, death..)
@@ -61,19 +64,28 @@ public class DirectorLogic : MonoBehaviour
         SetForm(Form.arcade);
         pauseTimers = true;
         spawnTimer = 5;
+        waveTimer = waveInterval;
     }
 
     // Update is called once per frame
     void Update()
     {
+
         spawnTimer -= Time.deltaTime;
         perSecond = (60 * Time.deltaTime);
 
         if (spawnTimer < 0)
         {   // Begin raising difficulty
             pauseTimers = false;
+            waveTimer -= Time.deltaTime;
         }
         CurrencyUpdate();
+
+        if (waveTimer < 0)
+        {
+            WaveSpawn();
+            waveTimer = waveInterval;
+        }
 
         UpdateScreenSize();
         #region DEBUG SHIT
@@ -88,6 +100,16 @@ public class DirectorLogic : MonoBehaviour
             SetForm(Form.side);
         #endregion
     }
+    void WaveSpawn()
+    {
+        //if (budget < threatPar)
+        if (Random.Range(1, 101) <= excitement / 3) // chance to spawn wave capped at 33% on a clear map
+        {
+
+        }
+    }
+        
+
     /// <summary>
     /// CurrencyUpdate runs once per frame and is in charge of keeping track
     /// of the emotion values and currencies the Director has. It doesn't invoke
@@ -105,7 +127,8 @@ public class DirectorLogic : MonoBehaviour
             threatPar = parTargetBase * (1 + ((difficulty - 1) / 2)); // magic bullshit, makes it good
 
             // Passive increase in difficulty and boredom, scaled by stress ratio
-            difficulty += (Time.deltaTime / difficultyCrawl) / stress;
+            float amount = difficultyIncreaseAmount / stress;
+            difficulty += amount * (Time.deltaTime / difficultyCrawl);
             boredom += (boredomCrawl * perSecond) / stress;
         }
         else

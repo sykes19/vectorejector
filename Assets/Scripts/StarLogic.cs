@@ -9,8 +9,12 @@ public class StarLogic : MonoBehaviour
     public DirectorSpawnLogic spawnLogic;
     public Vector3 dir;
     public float speed;
+    [Tooltip("The original size of the star")]
     public float scaleBase;
+    [Tooltip("High ratio = slow stars are smaller, fast stars are bigger")]
     public float scaleRatio;
+    [Tooltip("Scale Factor is what % of speed to consider in using to change scale")]
+    public float scaleFactor;
     public float minSpeed;
     public float maxSpeed;
     public float speedMulti;
@@ -20,8 +24,12 @@ public class StarLogic : MonoBehaviour
     private void Awake()
     {
         speed = Random.Range(minSpeed, maxSpeed);
-        scale = scaleBase * (speed * scaleRatio);
-        transform.localScale = Vector3.one * scale;
+        // Scaled Speed is what percentage of speed should be taken into the equation
+        float scaledSpeed = speed * scaleFactor;
+        // Scale Ratio is how much speed should affect the scale of the star
+        scaleRatio = 1.0f + scaledSpeed * scaleRatio; 
+        scale = scaleBase * scaleRatio;
+        transform.localScale *= scale;
     }
     private void OnEnable()
     {

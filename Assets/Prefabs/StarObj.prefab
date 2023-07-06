@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 1114887095248687393}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.19999999, y: 0.19999999, z: 0.19999999}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -63,7 +63,8 @@ MonoBehaviour:
   dir: {x: 0, y: 0, z: 0}
   speed: 0
   scaleBase: 0.2
-  scaleRatio: 0.18
+  scaleRatio: 0.5
+  scaleFactor: 1
   minSpeed: 0.3
   maxSpeed: 1.5
   speedMulti: 0

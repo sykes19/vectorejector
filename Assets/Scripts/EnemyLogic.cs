@@ -43,6 +43,7 @@ public class EnemyLogic : MonoBehaviour
     }
     private void OnEnable()
     {
+        DirectorLogic.Instance.threatEnemy += budgetCost;
         //stance = Stance.holding;
         // Flip a coin and make it either -1 or 1;
         int rotDir = (Random.Range(0, 2) * 2) - 1;
@@ -56,6 +57,7 @@ public class EnemyLogic : MonoBehaviour
     }
     private void OnDisable()
     {
+        DirectorLogic.Instance.threatEnemy -= budgetCost;
         DirectorLogic.OnFormChange -= OnFormChange;
     }
     void Start()

@@ -484,7 +484,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTarget: {fileID: 0}
   bullet: {fileID: 2291205288189166308, guid: 937df1f7d3f45124faf2e12e7c4346a6, type: 3}
-  budgetCost: 100
+  budgetCost: 30
   healthMax: 150
   burstAmmo: 6
   myAmmo: 0

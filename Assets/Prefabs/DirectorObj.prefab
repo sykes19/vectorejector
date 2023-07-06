@@ -78,7 +78,7 @@ MonoBehaviour:
   howManyStars: 400
   pooledEBullets: []
   eBulletToPool: {fileID: 2291205288189166308, guid: 937df1f7d3f45124faf2e12e7c4346a6, type: 3}
-  howManyEBullets: 200
+  howManyEBullets: 300
   pooledPBullets: []
   pBulletToPool: {fileID: 2291205288189166308, guid: 5e0cde891a15d054c99584cfc8e0020c, type: 3}
   howManyPBullets: 40
@@ -100,6 +100,7 @@ MonoBehaviour:
   parIncreaseAmount: 25
   waveInterval: 0.5
   difficultyCrawl: 15
+  difficultyIncreaseAmount: 0.1
   boredomCrawl: 1
   threatEnemy: 0
   threatPlayer: 0
