@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static StaticBullshit;
+using Random = UnityEngine.Random;
 
 public class DirectorSpawnLogic : MonoBehaviour
 {
@@ -25,6 +26,7 @@ public class DirectorSpawnLogic : MonoBehaviour
     public float starSpeedMultiplier;
     public float playerRespawnTimer;
     bool playerAlive;
+    int budgies;
     // Timer related
     public float astInterval;
     float astTimer;
@@ -37,6 +39,8 @@ public class DirectorSpawnLogic : MonoBehaviour
 
     void Awake()
     {
+        DirectorLogic.Instance.spawner = this;
+
         // Failsafe spawn timer
         if (astInterval == 0)
             astInterval = 1;
@@ -46,11 +50,13 @@ public class DirectorSpawnLogic : MonoBehaviour
     private void OnEnable()
     {
         DirectorLogic.OnFormChange += OnFormChange;
+        DirectorLogic.OnWaveSpawned += WaveSpawn;
         PlayerLogic.OnPlayerDeath += OnPlayerDeath;
     }
     private void OnDisable()
     {
         DirectorLogic.OnFormChange -= OnFormChange;
+        DirectorLogic.OnWaveSpawned -= WaveSpawn;
         PlayerLogic.OnPlayerDeath -= OnPlayerDeath;
     }
     private void Start()
@@ -64,20 +70,13 @@ public class DirectorSpawnLogic : MonoBehaviour
     void Update()
     {
 
-        // Asteroid spawn timer
-        if (astTimer >= astInterval)
-        {
-            //SpawnAsteroid(40);
-            astTimer -= astInterval;
-        }
+  
         // Star spawn timer
         if (starTimer >= starIntervalAdjusted)
         {
             SpawnStar(false);
             starTimer -= starIntervalAdjusted;
         }
-
-        astTimer += Time.deltaTime;
         starTimer += Time.deltaTime;
         playerRespawnTimer -= Time.deltaTime;
         if (!playerAlive && playerRespawnTimer < 0)
@@ -106,6 +105,16 @@ public class DirectorSpawnLogic : MonoBehaviour
         #endregion 
     }
 
+    void WaveSpawn(int bud)
+    {
+        int budgies = bud;
+        while (budgies > 0)
+        {
+            float rand = Random.value;
+
+            budgies -= 100;
+        }
+    }
     void OnFormChange(Form form)
     {
         float aspectRatioMod = 1;

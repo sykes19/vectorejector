@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using UnityEngine;
 using static StaticBullshit;
 using Random = UnityEngine.Random;
@@ -43,7 +44,7 @@ public class AsteroidLogic : MonoBehaviour
     }
     private void OnEnable()
     {
-        SetShape();
+        SetShape(size);
         DirectorLogic.Instance.threatEnemy += budgetCost;
         // Set initial values in case nothing else gives me any orders.
         speed = (speed / 10) * Random.Range(0.5f, 2.5f);                   // Random speed
@@ -87,11 +88,15 @@ public class AsteroidLogic : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    void SetShape()
+    void SetShape(int s)
     {
-        // Assign changes based on what size asteroid is being spawned
         float sizeMultiplier = 1;
-        int choice = Random.Range(1, 4);
+        int choice = s;
+        // If size is 0, choose an asteroid at random.
+        if (s == 0)
+            choice = Random.Range(1, 4);
+            
+        // Assign changes based on what size asteroid is being spawned
         if (choice == 1)
         {
             sizeMultiplier = 1f;

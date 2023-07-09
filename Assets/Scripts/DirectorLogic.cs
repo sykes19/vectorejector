@@ -8,11 +8,15 @@ using static StaticBullshit;
 public class DirectorLogic : MonoBehaviour
 {
     public static DirectorLogic Instance { get; private set; }
+    public delegate void WaveSpawned(int budgies);
+    public static event WaveSpawned OnWaveSpawned;
+
 
     #region INIT
     public delegate void FormChange(Form newForm);
     public static event FormChange OnFormChange;
 
+    public DirectorSpawnLogic spawner;
 
     [Tooltip("Target for how much threat should be in play")]
     public float threatPar;
@@ -70,7 +74,6 @@ public class DirectorLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         spawnTimer -= Time.deltaTime;
         perSecond = (60 * Time.deltaTime);
 
@@ -83,7 +86,7 @@ public class DirectorLogic : MonoBehaviour
 
         if (waveTimer < 0)
         {
-            WaveSpawn();
+            WaveBudget();
             waveTimer = waveInterval;
         }
 
@@ -100,12 +103,29 @@ public class DirectorLogic : MonoBehaviour
             SetForm(Form.side);
         #endregion
     }
-    void WaveSpawn()
+    void WaveBudget()
     {
         //if (budget < threatPar)
         if (Random.Range(1, 101) <= excitement / 3) // chance to spawn wave capped at 33% on a clear map
         {
-
+            // Only use 25% of budget + 12.5% of budget increase by bonus budget
+            budgetAllowance = (budget/4) + (budget/4 * (budgetBonus/8));
+            // Budget cannot exceed 70% of par
+            if (budgetAllowance > threatPar * 0.7f)
+            {
+                int oldBudget = budgetAllowance;
+                budgetAllowance = Mathf.RoundToInt(threatPar * 0.7f);
+                int budgetDelta = Mathf.Abs(budgetAllowance - oldBudget);
+                // Convert trimmed budget to boredom currency
+                float boredomBoost = (difficulty*(budgetDelta/budget))*25;
+                boredomBoost /= (1 + (threatEnemy / 100));
+                boredom += boredomBoost;
+                print("Trim has increased boredom by " + boredomBoost);
+            }
+            
+            // AT THIS POINT, WE NEED TO SPAWN A WAVE WITH BUDGETALLOWANCE
+            OnWaveSpawned.Invoke(budgetAllowance);
+            
         }
     }
         
